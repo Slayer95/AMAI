@@ -2818,38 +2818,9 @@ function InitProfile takes nothing returns nothing
     call SetProfileNotUsed(-1)
   endif
 
-  if not fixedcomputername then
-    set ai_name = profilename[profile]
-  elseif add_tag then
-    set ai_name = "AMAI"
-  else
-    set ai_name = "Computer"
-  endif
-
-  call SetChatVar("Name", ai_name)
-
-  if add_tag == true and not fixedcomputername and not add_skill then
-    set ai_name = "[AMAI]"+ai_name
-  elseif add_tag == true and not fixedcomputername and add_skill then
-    if difficulty == EASY then
-      set ai_name = "[AMAI Easy]"+ai_name
-    elseif difficulty == HARD then
-      set ai_name = "[AMAI Insane]"+ai_name
-    else
-      set ai_name = "[AMAI Normal]"+ai_name
-    endif
-  elseif add_skill == true then
-    if difficulty == EASY then
-      set ai_name = ai_name+" (Easy)"
-    elseif difficulty == HARD then
-      set ai_name = ai_name+" (Insane)"
-    else
-      set ai_name = ai_name+" (Normal)"
-    endif
-  endif
-
-  call SetPlayerName(ai_player, ai_name)
+  set ai_name = GetPlayerName(ai_player)
   set message_add = c2s(GetPlayerColor(ai_player))
+  call SetChatVar("Name", ai_name)
 
   set attacking_aggression = attacking_aggression + p_aggression[profile]
   set uncertainty = p_uncertainty[profile]
@@ -3092,6 +3063,107 @@ endfunction
 //============================================================================
 //  (AMAI)    Chat function
 //============================================================================
+
+//============================================================================
+function AddAMAIName takes integer data returns nothing
+    if data == 0 then
+        if not fixedcomputername then
+            set ai_name = profilename[profile]
+        elseif add_tag then
+            set ai_name = "AMAI"
+        else
+            set ai_name = "Computer"
+        endif
+
+        call SetChatVar("Name", ai_name)
+
+        if add_tag == true and not fixedcomputername and not add_skill then
+            set ai_name = "[AMAI]"+ai_name
+            elseif add_tag == true and not fixedcomputername and add_skill then
+            if difficulty == EASY then
+              set ai_name = "[AMAI Easy]"+ai_name
+            elseif difficulty == HARD then
+              set ai_name = "[AMAI Insane]"+ai_name
+            else
+              set ai_name = "[AMAI Normal]"+ai_name
+            endif
+            elseif add_skill == true then
+            if difficulty == EASY then
+              set ai_name = ai_name+" (Easy)"
+            elseif difficulty == HARD then
+              set ai_name = ai_name+" (Insane)"
+            else
+              set ai_name = ai_name+" (Normal)"
+            endif
+        endif
+
+        call SetPlayerName(ai_player, ai_name)
+        set message_add = c2s(GetPlayerColor(ai_player))
+    else
+        set ai_name = "Player "
+        if data == 1 then
+            set ai_name = ai_name + "1"
+        elseif data == 2 then
+            set ai_name = ai_name + "2"
+        elseif data == 3 then
+            set ai_name = ai_name + "3"
+        elseif data == 4 then
+            set ai_name = ai_name + "4"
+        elseif data == 5 then
+            set ai_name = ai_name + "5"
+        elseif data == 6 then
+            set ai_name = ai_name + "6"
+        elseif data == 7 then
+            set ai_name = ai_name + "7"
+        elseif data == 8 then
+            set ai_name = ai_name + "8"
+        elseif data == 9 then
+            set ai_name = ai_name + "9"
+        elseif data == 10 then
+            set ai_name = ai_name + "10"
+        elseif data == 11 then
+            set ai_name = ai_name + "11"
+        elseif data == 12 then
+            set ai_name = ai_name + "12"
+        endif
+        call SetChatVar("Name", ai_name)
+        call SetPlayerName(ai_player, ai_name)
+        set message_add = c2s(GetPlayerColor(ai_player))
+    endif
+endfunction
+
+//============================================================================
+function ReportAMAIName takes nothing returns nothing
+    local integer i = GetPlayerId(ai_player)
+    if i == 0 then
+        call DisplayToAll("player_id=0; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 1 then
+        call DisplayToAll("player_id=1; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 2 then
+        call DisplayToAll("player_id=2; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 3 then
+        call DisplayToAll("player_id=3; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 4 then
+        call DisplayToAll("player_id=4; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 5 then
+        call DisplayToAll("player_id=5; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 6 then
+        call DisplayToAll("player_id=6; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 7 then
+        call DisplayToAll("player_id=7; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 8 then
+        call DisplayToAll("player_id=8; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 9 then
+        call DisplayToAll("player_id=9; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 10 then
+        call DisplayToAll("player_id=10; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 11 then
+        call DisplayToAll("player_id=11; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    elseif i == 12 then
+        call DisplayToAll("player_id=12; ai_name=" + ai_name + "; profilename=" + profilename[profile] + "; message_add=" + message_add)
+    endif
+endfunction
+
 function QueueChat takes string text, player p, boolean important returns nothing
     local integer i = 0
     set chat_queue_size = chat_queue_size + 1
@@ -7912,7 +7984,13 @@ endfunction
 
 //============================================================================
 function cmd_misc takes integer cmd, integer data returns nothing
-  if cmd == 50 then	// Triggering chat
+  if cmd == 88 then // Triggering rename
+    call AddAMAIName(data)
+
+  elseif cmd == 89 then // Triggering rename
+    call ReportAMAIName()
+
+  elseif cmd == 50 then // Triggering chat
     set chatting = not chatting
 
   elseif cmd == 51 then	// Triggering debug
