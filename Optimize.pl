@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
+use Math::BaseCalc;
 
 unless ( $ARGV[0] and $ARGV[0] !~ /-[h?]/ ) {
 	print "------------------------------------------------------\n";
@@ -28,6 +29,7 @@ my %no_rename;
 my %varmap;
 my $varmapnum = 0;
 my $opt_blizzard = 0;
+my $b62 = Math::BaseCalc->new( digits => [0..9, 'a' .. 'z', 'A' .. 'Z'] );
 
 if ($ARGV[0] eq '-b') {
   $libfile = $ARGV[1];
@@ -399,7 +401,7 @@ sub CheckRenameObject {
   }
   unless ($varmap{$obj}) {
     $varmapnum++;
-    $varmap{$obj} = sprintf('v%x',$varmapnum);
+    $varmap{$obj} = sprintf('v%s',$b62->to_base($varmapnum));
   }
   return $varmap{$obj};
 }
