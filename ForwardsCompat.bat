@@ -84,9 +84,10 @@ jassparser %VER%\common.j Scripts\Blizzard_%VER%.j
 if "%errorlevel%"=="1" SET RESULTFWCOMPAT=1
 
 if "%RESULTFWCOMPAT%"=="1" (
-  ECHO Apply forwards compatability error %VER%
+  ECHO Apply forwards compatibility error %VER%
+  del checksum.txt
   exit /b %RESULTFWCOMPAT%
 ) else (
-  ECHO Apply forwards compatability success %VER%
+  ECHO Apply forwards compatibility success %VER%
 )
 ECHO ========================================

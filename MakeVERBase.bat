@@ -74,5 +74,9 @@ if "%RESULTMAKEVER%"=="1" (
   ) else (
     ECHO Compilation %VER% successful
   )
+  ECHO _____________________________
+  ECHO saving \checksum.txt
+  (git rev-parse head) > checksum.txt 2>&1
+  ECHO _____________________________
 )
-ECHO =============================
+ECHO _____________________________
