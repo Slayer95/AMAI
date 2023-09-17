@@ -73,10 +73,13 @@ function KillYourself takes boolean end_ai returns nothing
     if SaveYourself() then
       return
     endif
+    if player_defeated or (GetPlayerSlotState(ai_player) == PLAYER_SLOT_STATE_LEFT) then
+      return
+    endif
+    call Chat(C_AGG)
+    call Chat(C_EGG)
+    call Sleep(3)
     if not player_defeated and not (GetPlayerSlotState(ai_player) == PLAYER_SLOT_STATE_LEFT) then
-      call Chat(C_AGG)
-      call Chat(C_EGG)
-      call Sleep(3)
       set g = CreateGroup()
       call GroupEnumUnitsOfPlayer(g, ai_player, null)
       set g = SelectByAlive(g, true)
@@ -133,9 +136,6 @@ function KillYourself takes boolean end_ai returns nothing
         //call SetPlayerAlliance(ai_player, Player(PLAYER_NEUTRAL_AGGRESSIVE), ALLIANCE_PASSIVE, false)
       //endif
     endif
-//    if end_ai then
-//      call PauseCompAI(ai_player,true)
-//    endif
 endfunction
 
 function Defeated takes nothing returns nothing
