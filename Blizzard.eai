@@ -1949,12 +1949,13 @@ function LanguageDlg takes nothing returns nothing
   call TriggerAddAction(language_trigger, function LanguageDlgResponse)
 
   call DialogDisplay(Player(host), language_dialog, true)
+  call DestroyTrigger(GetTriggeringTrigger())
 endfunction
 
 function InitCommander takes nothing returns nothing
-  local timer t = CreateTimer()
-  set last_timer = t
-  call TimerStart(t,1.0, false, function LanguageDlg)
+  local trigger t = CreateTrigger()
+  call TriggerRegisterVariableEvent(t, "udg_RFGamePreparation", EQUAL, -1.00)
+  call TriggerAddAction(t, function LanguageDlg)
   set t = null
 endfunction
 
