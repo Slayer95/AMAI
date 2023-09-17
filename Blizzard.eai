@@ -283,7 +283,7 @@ endfunction
 #INCLUDE <playercolors.j>
 
 function c2s takes player p returns string
-  return cs2s(GetPlayerName(p), GetPlayerColor(p)) + ": "
+  return cs2s(GetPlayerName(p) + ":", GetPlayerColor(p)) + " "
 endfunction
 
 function DisplayToTP takes string msg returns nothing
