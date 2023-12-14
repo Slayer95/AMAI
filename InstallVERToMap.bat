@@ -1,12 +1,23 @@
+@ECHO OFF
+
 SET VER=%~1
 SET RESULTMAKEVER=0
+
 if not exist "%~2" (
 	ECHO %2 Map cannot be found
 	exit /b 1
 )
 MPQEditor htsize "%~2" 64
 if "%errorlevel%"=="5" SET RESULTMAKEVER=%errorlevel%
-MPQEditor a "%~2" "%~dp0Scripts\%VER%\*.ai" Scripts
+MPQEditor a "%~2" "%~dp0Scripts\%VER%\common.ai" "Scripts\common.ai"
+if "%errorlevel%"=="5" SET RESULTMAKEVER=%errorlevel%
+MPQEditor a "%~2" "%~dp0Scripts\%VER%\human.ai" "Scripts\human.ai"
+if "%errorlevel%"=="5" SET RESULTMAKEVER=%errorlevel%
+MPQEditor a "%~2" "%~dp0Scripts\%VER%\orc.ai" "Scripts\orc.ai"
+if "%errorlevel%"=="5" SET RESULTMAKEVER=%errorlevel%
+MPQEditor a "%~2" "%~dp0Scripts\%VER%\undead.ai" "Scripts\undead.ai"
+if "%errorlevel%"=="5" SET RESULTMAKEVER=%errorlevel%
+MPQEditor a "%~2" "%~dp0Scripts\%VER%\elf.ai" "Scripts\elf.ai"
 if "%errorlevel%"=="5" SET RESULTMAKEVER=%errorlevel%
 if "%~3" == "1" (
   ECHO Installed Commander to Map
