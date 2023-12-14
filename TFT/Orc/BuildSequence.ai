@@ -70,8 +70,6 @@ function global_init_strategy takes nothing returns nothing
 
 
 
-
-
 endfunction
 function global_build_sequence takes nothing returns nothing
     // Anti rush
@@ -93,29 +91,35 @@ function global_build_sequence takes nothing returns nothing
       endif
     endif
 
-      if urgent_healing_count > 3 then
-            call BuildItem(1, uHEALING_SALVE, 120)
-      else
-            call BuildItem(1, uHEALING_SALVE, 90)
-      endif
+    if urgent_healing_count > 3 then
+          call BuildItem(1, uHEALING_SALVE, 120)
+	  else
+          call BuildItem(1, uHEALING_SALVE, 50)
+    endif
+    if urgent_healing_count > 2 then
       call BuildItem(2, uHEALING_SALVE, 50)
-      call BuildItem(1, uM_SCROLL_OF_HEALING, 55)
-      
-      call BuildItem(1, uSCROLL_OF_SPEED, 70)
-      call BuildItem(1, uSCROLL_OF_PROTECTION, 40)
-      call BuildItem(1, uPOTION_OF_LESSER_INVULNERBILITY, 50)
-      call BuildItem(1, uBOOTS_OF_SPEED, 50)
-      if hero[1] == uBLADE_MASTER then
-            call BuildItem(1, uLESSER_CLARITY_POTION, 70)
+    endif
+    call BuildItem(1, uM_SCROLL_OF_HEALING, 55)
+    call BuildItem(1, uSCROLL_OF_SPEED, 40)
+    call BuildItem(1, uPOTION_OF_LESSER_INVULNERBILITY, 50)
+    call BuildItem(1, uBOOTS_OF_SPEED, 50)
+    call BuildItem(1, uLESSER_CLARITY_POTION, 35)
+    call BuildItem(1, uM_TOWN_PORTAL, 100)
+    if tier >= 2 then
+      call BuildItem(1, uHEALING_POTION, 70)
+      call BuildItem(1, uTOWN_PORTAL, 180)
+      if c_ally_total > 0 then
+            call BuildItem(1, uSTAFF_OF_PRESERVATION, 30)
       endif
-      if tier == 1 then
-	      call BuildItem(1, uM_TOWN_PORTAL, 100)
+    endif
+    if tier >= 3 then
+      if c_ally_total > 0 then
+        call BuildItem(1, uSTAFF_OF_SANCTUARY, 30)
       endif
-      if tier > 1 then
-            call BuildItem(1, uHEALING_POTION, 70)
-            call BuildItem(1, uTOWN_PORTAL, 150)
-      endif
-
+    endif
+    if GetGold() > 1000 then
+      call BuildItem(1, uSTAFF_OF_TELEPORTATION, 35)
+    endif
     // DYNAMIC
     call ResetDynamicSystem()
     if tier == 1 then
@@ -173,8 +177,8 @@ function global_build_sequence takes nothing returns nothing
       call AddUnitToAntiair(uRAIDER,1)
       call AddUnitToAnticasters(uSPIRIT_WALKER,15)
       call AddUnitToAnticasters(uSHAMAN,5)
-      call AddUnitToAntitowers(uCATAPULT,8)
-      call AddUnitToAntitowers(uBATRIDER,1)
+      call AddUnitToAntitowers(uCATAPULT,8+GetUpgradeLevel(old_id[uUPG_ORC_NAPTHA]))
+      call AddUnitToAntitowers(uBATRIDER,1+GetUpgradeLevel(old_id[uUPG_ORC_FIRE]))
       call AddUnitToAntitowers(uRAIDER,1)
       call AddUnitToAntipiercing(uRAIDER, 1)
       call AddUnitToAntipiercing(uHEAD_HUNTER, 1)
@@ -202,56 +206,56 @@ function global_build_sequence takes nothing returns nothing
 
     // Global upgrades
 
-      // TIER 1 UPGRADES
-      //--------------------------------------------------------
-		if tier == 1 then
-		endif
-	  	call BuildAdvUpgr2(3, uUPG_ORC_MELEE, 1,TownCountDone(uGRUNT) + TownCountDone(uTAUREN) + TownCountDone(uRAIDER), 5,15,35)
-   		call BuildAdvUpgr2(3, uUPG_ORC_ARMOR, 1,TownCountDone(uGRUNT) + TownCountDone(uTAUREN) + TownCountDone(uRAIDER) + TownCountDone(uHEAD_HUNTER) + TownCountDone(uCATAPULT) + TownCountDone(uKODO_BEAST) + TownCountDone(uWYVERN) + TownCountDone(uBATRIDER), 5,15,35)
-		call BuildAdvUpgr2(3, uUPG_ORC_RANGED, 1,TownCountDone(uHEAD_HUNTER) + TownCountDone(uCATAPULT) + TownCountDone(uKODO_BEAST) + TownCountDone(uWYVERN) + TownCountDone(uBATRIDER), 5,15,35)
+    // TIER 1 UPGRADES
+    //--------------------------------------------------------
+    if tier >= 1 then
+      call BuildUpgr(1, uUPG_BACKPACK_ORC, 10)
+    endif
+    call BuildAdvUpgr2(3, uUPG_ORC_MELEE, 1,TownCountDone(uGRUNT) + TownCountDone(uTAUREN) + TownCountDone(uRAIDER), 4,15,40)
+    call BuildAdvUpgr2(3, uUPG_ORC_ARMOR, 1,TownCountDone(uGRUNT) + TownCountDone(uTAUREN) + TownCountDone(uRAIDER) + TownCountDone(uHEAD_HUNTER) + TownCountDone(uCATAPULT) + TownCountDone(uKODO_BEAST) + TownCountDone(uWYVERN) + TownCountDone(uBATRIDER), 3,15,40)
+    call BuildAdvUpgr2(3, uUPG_ORC_RANGED, 1,TownCountDone(uHEAD_HUNTER) + TownCountDone(uCATAPULT) + TownCountDone(uKODO_BEAST) + TownCountDone(uWYVERN) + TownCountDone(uBATRIDER), 4,15,40)
+    if not (c_enemy_total == c_enemy[R_ELF]) then
+      call BuildAdvUpgr(2, uUPG_ORC_SPIKES, 1, 1, 1, 10, 10)
+    else
+      call BuildAdvUpgr(2, uUPG_ORC_SPIKES, 1, 1, 1, 5, 5)
+    endif
+    call BuildAdvUpgr2(1, uUPG_ORC_PILLAGE, 1,TownCountDone(uRAIDER) + TownCountDone(uGRUNT),0.5,15,60)
 
-	  
-      // TIER 2 UPGRADES
-      //--------------------------------------------------------
-		if tier == 2 then
-		endif
-		if not (c_enemy_total == c_enemy[R_ELF]) then
-			call BuildAdvUpgr(3, uUPG_ORC_SPIKES, 1, 1, 1, 10, 10)
-		endif
-		call BuildAdvUpgr2(1, uUPG_ORC_PILLAGE, 2,TownCountDone(uRAIDER) + TownCountDone(uGRUNT),0.5,15,50)
-	  	call BuildAdvUpgr2(1, uUPG_ORC_WAR_DRUMS, 2,TownCountDone(uKODO_BEAST),0.25,10,50)
-		call BuildAdvUpgr2(1, uUPG_ORC_ENSNARE, 2,TownCountDone(uRAIDER),0.33,15,70)
-		call BuildAdvUpgr2(1, uUPG_ORC_REGEN, 2,TownCountDone(uHEAD_HUNTER)+TownCountDone(uBATRIDER),1,15,45)
-		call BuildAdvUpgr2(2, uUPG_ORC_SHAMAN, 2,TownCountDone(uSHAMAN),0.33,15,80)
-		call BuildAdvUpgr2(2, uUPG_ORC_DOCS, 2,TownCountDone(uWITCH_DOCTOR), 0.33,15,80)
-		call BuildAdvUpgr2(2, uUPG_ORC_SWALKER, 2,TownCountDone(uSPIRIT_WALKER), 0.33,15,80)
-		call BuildAdvUpgr2(2, uUPG_ORC_BERSERK, 2, TownCountDone(uGRUNT), 0.33,15,60)	  
-
-      // TIER 3 UPGRADES
-      //--------------------------------------------------------
-		if tier == 3 then
-		endif
-		call BuildAdvUpgr2(1, uUPG_ORC_NAPTHA, 3,TownCountDone(uCATAPULT),0.25,15,50)
-	 	if towerrush then
-        		call BuildAdvUpgr(1, uUPG_ORC_BURROWS, 3,1,1,0,40)
-	  	else
-			call BuildAdvUpgr(1, uUPG_ORC_BURROWS, 3, 1,1,0,40)
-		endif
-		call BuildAdvUpgr2(1, uUPG_ORC_BERSERKER, 3,TownCountDone(uHEAD_HUNTER), 0.33,15,60)
-        call BuildAdvUpgr2(1, uUPG_ORC_VENOM, 3,TownCountDone(uWYVERN),0.33,15,70)
-		call BuildAdvUpgr2(1, uUPG_ORC_PULVERIZE, 3,TownCountDone(uTAUREN),0.25,15,60)
-		call BuildAdvUpgr2(1, uUPG_ORC_FIRE, 3,TownCountDone(uBATRIDER),0.33,15,60)
-		//call BuildAdvUpgr2(1, uUPG_ORC_WAR_DRUMS,3, TownCountDone(uKODO_BEAST),0.25,15,40)
-	  
+    // TIER 2 UPGRADES
+    //--------------------------------------------------------
+    if tier == 2 then
+    endif
 
 
-          // Global Mercenaries
-          call BuildUnit(2, merc_healer, 70)
+    call BuildAdvUpgr2(1, uUPG_ORC_ENSNARE, 2,TownCountDone(uRAIDER),0.33,15,80)
+    call BuildAdvUpgr2(1, uUPG_ORC_REGEN, 2,TownCountDone(uHEAD_HUNTER)+TownCountDone(uBATRIDER),1,15,60)
+    call BuildAdvUpgr2(2, uUPG_ORC_SHAMAN, 2,TownCountDone(uSHAMAN),0.33,15,90)
+    call BuildAdvUpgr2(2, uUPG_ORC_DOCS, 2,TownCountDone(uWITCH_DOCTOR), 0.33,15,90)
+    call BuildAdvUpgr2(2, uUPG_ORC_SWALKER, 2,TownCountDone(uSPIRIT_WALKER), 0.33,15,90)
+    call BuildAdvUpgr2(2, uUPG_ORC_BERSERK, 2, TownCountDone(uGRUNT), 0.33,15,60)	  
+    call BuildAdvUpgr(1, uUPG_ORC_BURROWS, 2,1,1,0,50)
 
-          // Harass
-          call Harass(1, HARASS_TARGET_PEONS, true, 4, 0.75, 0, GetPlayerRace(nearest_enemy) != RACE_UNDEAD and TownCountDone(uGRUNT) > 4, 40, 80)
-          call Harass(3, HARASS_TARGET_PEONS, true, 5, 0.85, 0, GetPlayerRace(nearest_enemy) != RACE_UNDEAD and TownCountDone(uWYVERN) > 4, 120, 160)
-	  call Harass(4, HARASS_TARGET_PEONS, false, 12, 0.1, 0, hero[1] == uBLADE_MASTER and hero_skills[1] == HERO_SKILL_MINOR and not towerrush and GetPlayerRace(nearest_enemy) != RACE_UNDEAD, 36, 150)
+    // TIER 3 UPGRADES
+    //--------------------------------------------------------
+    if tier == 3 then
+    endif
+    call BuildAdvUpgr2(1, uUPG_ORC_NAPTHA, 3,TownCountDone(uCATAPULT),0.25,15,60)
+    call BuildAdvUpgr2(1, uUPG_ORC_WAR_DRUMS, 3,TownCountDone(uKODO_BEAST),0.25,10,60)
+    call BuildAdvUpgr2(1, uUPG_ORC_BERSERKER, 3,TownCountDone(uHEAD_HUNTER), 0.33,15,75)
+    call BuildAdvUpgr2(1, uUPG_ORC_VENOM, 3,TownCountDone(uWYVERN),0.33,15,85)
+    call BuildAdvUpgr2(1, uUPG_ORC_PULVERIZE, 3,TownCountDone(uTAUREN),0.25,15,75)
+    call BuildAdvUpgr2(1, uUPG_ORC_FIRE, 3,TownCountDone(uBATRIDER),0.33,15,75)
+
+
+    // Global Mercenaries
+
+    // Harass
+    if not towerrush and not town_threatened then
+      call Harass(1, HARASS_TARGET_PEONS, true, 4, 0.75, 0, GetPlayerRace(nearest_enemy) != RACE_UNDEAD , 40, 80)
+      call Harass(3, HARASS_TARGET_PEONS, true, 5, 0.85, 0, GetPlayerRace(nearest_enemy) != RACE_UNDEAD , 120, 160)
+      call Harass(4, HARASS_TARGET_PEONS, false, 12, 0.1, 0, hero[1] == uBLADE_MASTER and hero_skills[1] == HERO_SKILL_MINOR and GetPlayerRace(nearest_enemy) != RACE_UNDEAD, 36, 150)
+    endif
+
 
 
 
@@ -337,22 +341,26 @@ endfunction
 function build_sequence_NormalOrc takes nothing returns nothing
 if tier == 3 then
 
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
       call BuildUnit(6, uGRUNT, 40)
       call BuildUnit(4, uTAUREN, 44)
-      call BuildUnit(3, uWYVERN, 46)
+      call BuildUnit(4, uWYVERN, 46)
       call BuildUnit(2, uBATRIDER, 48)
       call BuildUnit(4, uRAIDER, 44)
+      call BuildUnit(4, uHEAD_HUNTER, 40)
       call BuildUnit(1, uKODO_BEAST, 50 )
       call BuildUnit(4, uSHAMAN, 44)
-      call BuildUnit(2, uWITCH_DOCTOR, 48)
-      call BuildUnit(1, uSPIRIT_WALKER, 50)
+      call BuildUnit(2, uSPIRIT_WALKER, 50)
       call BuildUnit(2, uCATAPULT, 48)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 50)
-
-
-
+      call BuildUnit(2, uWITCH_DOCTOR, 60)
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
+      call BuildUpgr(2, uUPG_ORC_SHAMAN, 65)
+      call BuildUpgr(1, uUPG_ORC_PULVERIZE, 65)
+      call BuildUpgr(1, uUPG_ORC_ENSNARE, 65)
+      call BuildUpgr(1, uUPG_ORC_BERSERK, 70)
+      call BuildUpgr(2, uUPG_ORC_SPIKES, 40)
 
 
 
@@ -371,22 +379,23 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(1, hero[1], 80)     
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, uVOODOO_LOUNGE, 60)
-
-      call BuildUnit(3, uGRUNT, 50)
-      call BuildUnit(3, uHEAD_HUNTER, 50)
+      call BuildUnit(1, hero[1], 140)     
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(5, uGRUNT, 50)
+      call BuildUnit(6, uHEAD_HUNTER, 50)
       call BuildUnit(2, uCATAPULT, 52)
-      call BuildUnit(1, uFORTRESS, 40)
-      call BuildUnit(1, uSHAMAN, 54)
+      call BuildUnit(1, uFORTRESS, 50)
+      call BuildUnit(2, uSHAMAN, 54)
       call BuildUnit(1, uSPIRIT_WALKER, 54)
       call BuildUnit(1, uWITCH_DOCTOR, 54)
-      call BuildUnit(2, uWYVERN, 52)
+      call BuildUnit(4, uWYVERN, 52)
       call BuildUnit(3, uRAIDER, 50)
 
-      call BuildUpgr(1, uUPG_ORC_SPIKES, 60)
 
+      call BuildUpgr(1, uUPG_ORC_SPIKES, 60)
+      call BuildUpgr(1, uUPG_ORC_SHAMAN, 65)
+      call BuildUpgr(1, uUPG_ORC_DOCS, 75)
+      call BuildUpgr(1, uUPG_ORC_BERSERK, 70)
 
 
 
@@ -405,16 +414,14 @@ elseif tier == 2 then
 
 else
 
-      call BuildUnit(1, hero[1], 80)     
+      call BuildUnit(1, hero[1], 150)
       call BuildUnit(2, uGRUNT, 60)
-      call BuildUnit(1, uHEAD_HUNTER, 55)
-      call BuildUnit(1, uVOODOO_LOUNGE, 54)
+      call BuildUnit(3, uHEAD_HUNTER, 55)
       call BuildUnit(3, uHEAD_HUNTER, 46)
       call BuildUnit(4, uGRUNT, 38)
+      call BuildUnit(1, uSTRONGHOLD, 45)
+      call BuildUnit(6, uGRUNT, 35)
       call BasicExpansionAM( GetMinesOwned() < 2 ,uGREAT_HALL, 37)
-      call BuildFront(1, uORC_WATCH_TOWER, 36)
-      call BuildUnit(6, uGRUNT, 25)
-      call BuildUnit(1, uSTRONGHOLD, 24)
       call BuildUnit(2, uCATAPULT, 22)
 
 
@@ -442,8 +449,6 @@ endfunction
 //============================================================================
 function init_strategy_FastSh takes nothing returns nothing
 
-    call AddHarass(2, 1, uTAUREN)
-    set distraction_group = 2
 
 
 
@@ -471,14 +476,15 @@ if tier == 3 then
       call BuildUnit(10, uTAUREN, 45)
       call BuildUnit(7, uSPIRIT_WALKER, 48)
       call BuildUnit(10, uSHAMAN, 45)
-      call BuildUnit(1, hero[1], 90)
-      call BuildUnit(1, hero[2], 70)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
-      call BuildUnit(1, uZEPPELIN, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
 
       call BuildUpgr(2, uUPG_ORC_SWALKER, 62)
       call BuildUpgr(2, uUPG_ORC_SHAMAN, 65)
       call BuildUpgr(1, uUPG_ORC_PULVERIZE, 65)
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -502,15 +508,17 @@ if tier == 3 then
 
 
 elseif tier == 2 then
-      call BuildUnit(5, uGRUNT, 65)
-      call BuildUnit(5, uSPIRIT_WALKER, 60)
+      call BuildUnit(10, uGRUNT, 65)
+      call BuildUnit(4, uSPIRIT_WALKER, 60)
       call BuildUnit(10, uSHAMAN, 60)
       call BuildUnit(1, uFORTRESS, 60)
-      call BuildUnit(1, hero[1], 80)
-
+      call BuildUnit(1, uWITCH_DOCTOR, 70)
+      call BuildUnit(1, hero[1], 130)
+      call BuildUnit(1, hero[2], 120)
+  
       call BuildUpgr(1, uUPG_ORC_SWALKER, 75)
       call BuildUpgr(1, uUPG_ORC_SHAMAN, 80)
-
+      call BuildUpgr(1, uUPG_ORC_DOCS, 75)
 
 
 
@@ -534,10 +542,9 @@ elseif tier == 2 then
 
 else
 
-      call BuildFront(2, uORC_WATCH_TOWER, 42)
-      	call BuildUnit(1, hero[1], 80)
-      	call BuildUnit(10, uGRUNT, 40)
-        call BuildUnit(1, uSTRONGHOLD, 50)
+      call BuildUnit(1, hero[1], 150)
+      call BuildUnit(10, uGRUNT, 40)
+      call BuildUnit(1, uSTRONGHOLD, 50)
 
 
 
@@ -595,15 +602,14 @@ endfunction
 function build_sequence_WyvSh takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(14, uWYVERN, 42)
+      call BuildUnit(16, uWYVERN, 42)
       call BuildUnit(8, uSHAMAN, 54)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
 
       call BuildUpgr(2, uUPG_ORC_SHAMAN, 70)
-      call BuildUpgr(1, uUPG_ORC_VENOM, 70)
-
+      call BuildUpgr(1, uUPG_ORC_VENOM, 75)
 
 
 
@@ -631,12 +637,12 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(10, uWYVERN, 40)
-      call BuildUnit(5, uSHAMAN, 50)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 40)
-      call BuildUnit(1, uFORTRESS, 20)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(12, uWYVERN, 40)
+      call BuildUnit(4, uSHAMAN, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, uFORTRESS, 45)
+
 
       call BuildUpgr(1, uUPG_ORC_SHAMAN, 60)
 
@@ -668,10 +674,9 @@ elseif tier == 2 then
 
 else
 
-      call BuildFront(2, uORC_WATCH_TOWER, 42)
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(10, uGRUNT, 40)
-        call BuildUnit(1, uSTRONGHOLD, 50)
+      call BuildUnit(1, hero[1], 150)
+      call BuildUnit(10, uGRUNT, 40)
+      call BuildUnit(1, uSTRONGHOLD, 50)
 
 
 
@@ -702,14 +707,9 @@ endfunction
 //============================================================================
 //  build_sequence
 //============================================================================
-
-//============================================================================
-//  build_sequence
-//============================================================================
 function init_strategy_HHunters takes nothing returns nothing
-    call AddBlock(1, uFORGE, false, 1, uBURROW, 60)
-    call AddBlock(1, uORC_ALTAR, false, 1, uBURROW, 60)
-    call AddBlock(1, uFORGE, false, 9, uPEON, 60)
+    call AddBlock(1, uORC_BARRACKS, false, 0, uFORGE, 60)
+    call AddBlock(1, uFORGE, false, 2, uBURROW, 20)
 
     call AddHarass(2, 3, uHEAD_HUNTER)
     set distraction_group = 2
@@ -732,17 +732,15 @@ endfunction
 function build_sequence_HHunters takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(3, merc_range, 70)
       call BuildUnit(32, uHEAD_HUNTER, 20)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
 
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
       call BuildUpgr(1, uUPG_ORC_REGEN, 84)
       call BuildUpgr(1, uUPG_ORC_BERSERKER, 84)
-
-
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -763,13 +761,13 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(2, merc_range, 70)
       call BuildUnit(20, uHEAD_HUNTER, 30)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, uFORTRESS, 10)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, hero[1], 130)
+      call BuildUnit(1, hero[2], 120)
+      call BuildUnit(1, uFORTRESS, 45)
+      call BuildUnit(2, uWITCH_DOCTOR, 70)
 
+      call BuildUpgr(1, uUPG_ORC_DOCS, 75)
       call BuildUpgr(1, uUPG_ORC_REGEN, 70)
 
 
@@ -794,7 +792,7 @@ else
 
       call BuildUnit(1, merc_rush, 60)
       call BuildUnit(12, uHEAD_HUNTER, 38)
-      call BuildUnit(1, hero[1], 80)
+      call BuildUnit(1, hero[1], 150)
       call BuildUnit(1, uSTRONGHOLD, 50)
 
 
@@ -845,14 +843,13 @@ function build_sequence_Raiders takes nothing returns nothing
 if tier == 3 then
 
       call BuildUnit(18, uRAIDER, 40)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
 
       call BuildUpgr(1, uUPG_ORC_ENSNARE, 76)
-
-
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -869,11 +866,12 @@ if tier == 3 then
 elseif tier == 2 then
 
       call BuildUnit(12, uRAIDER, 50)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, uFORTRESS, 10)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, uFORTRESS, 45)
+      call BuildUnit(2, uWITCH_DOCTOR, 70)
 
+      call BuildUpgr(1, uUPG_ORC_DOCS, 75)
       call BuildUpgr(1, uUPG_ORC_ENSNARE, 74)
 
 
@@ -892,10 +890,9 @@ elseif tier == 2 then
 
 else
 
-      call BuildFront(2, uORC_WATCH_TOWER, 42)
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(10, uGRUNT, 40)
-        call BuildUnit(1, uSTRONGHOLD, 50)
+      call BuildUnit(1, hero[1], 150)
+      call BuildUnit(10, uGRUNT, 40)
+      call BuildUnit(1, uSTRONGHOLD, 50)
 
 
 
@@ -920,7 +917,6 @@ endfunction
 function init_strategy_GruntCatapults takes nothing returns nothing
 
     call AddHarass(2, 1, uGRUNT)
-    call AddHarass(2, 1, uCATAPULT)
     set distraction_group = 2
 
 
@@ -943,14 +939,14 @@ if tier == 3 then
 
       call BuildUnit(20, uGRUNT, 60)
       call BuildUnit(6, uCATAPULT, 88)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
-      call BuildUnit(1, uZEPPELIN, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
 
       call BuildUpgr(1, uUPG_ORC_NAPTHA, 100)
       call BuildUpgr(1, uUPG_ORC_BERSERK, 100)
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -968,14 +964,14 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(10, uGRUNT, 60)
+      call BuildUnit(14, uGRUNT, 60)
       call BuildUnit(4, uCATAPULT, 52)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, uFORTRESS, 10)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
-      call BuildUnit(1, uZEPPELIN, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, uFORTRESS, 45)
+      call BuildUnit(2, uWITCH_DOCTOR, 70)
 
+      call BuildUpgr(1, uUPG_ORC_DOCS, 75)
       call BuildUpgr(1, uUPG_ORC_BERSERK, 80)
 
 
@@ -996,9 +992,9 @@ elseif tier == 2 then
 else
 
       call BuildUnit(10, uGRUNT, 50)
-      call BuildUnit(1, uCATAPULT, 30)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, uSTRONGHOLD, 60)
+      call BuildUnit(2, uCATAPULT, 30)
+      call BuildUnit(1, hero[1], 150)
+      call BuildUnit(1, uSTRONGHOLD, 50)
 
 
 
@@ -1023,12 +1019,10 @@ endfunction
 //  build_sequence
 //============================================================================
 function init_strategy_HeadCatapults takes nothing returns nothing
-    call AddBlock(1, uFORGE, false, 1, uBURROW, 60)
-    call AddBlock(1, uORC_ALTAR, false, 1, uBURROW, 60)
-    call AddBlock(1, uFORGE, false, 9, uPEON, 60)
+    call AddBlock(1, uORC_BARRACKS, false, 0, uFORGE, 60)
+    call AddBlock(1, uFORGE, false, 2, uBURROW, 20)
 
     call AddHarass(2, 3, uHEAD_HUNTER)
-    call AddHarass(2, 1, uCATAPULT)
     set distraction_group = 2
 
 
@@ -1052,17 +1046,17 @@ endfunction
 function build_sequence_HeadCatapults takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(3, merc_range, 70)
-      call BuildUnit(16, uHEAD_HUNTER, 40)
-      call BuildUnit(8, uCATAPULT, 56)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(18, uHEAD_HUNTER, 40)
+      call BuildUnit(6, uCATAPULT, 56)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
 
       call BuildUpgr(1, uUPG_ORC_REGEN, 72)
       call BuildUpgr(1, uUPG_ORC_BERSERKER, 72)
       call BuildUpgr(1, uUPG_ORC_NAPTHA, 66)
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -1083,13 +1077,12 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(2, merc_range, 70)
-      call BuildUnit(12, uHEAD_HUNTER, 50)
-      call BuildUnit(5, uCATAPULT, 64)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, uFORTRESS, 10)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(14, uHEAD_HUNTER, 50)
+      call BuildUnit(4, uCATAPULT, 64)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, uFORTRESS, 45)
+      call BuildUnit(2, uWITCH_DOCTOR, 70)
 
       call BuildUpgr(1, uUPG_ORC_REGEN, 74)
 
@@ -1116,7 +1109,7 @@ else
       call BuildUnit(1, merc_rush, 65)
       call BuildUnit(12, uHEAD_HUNTER, 38)
       call BuildUnit(2, uCATAPULT, 50)
-      call BuildUnit(1, hero[1], 70)
+      call BuildUnit(1, hero[1], 150)
       call BuildUnit(1, uSTRONGHOLD, 50)
 
 
@@ -1170,10 +1163,11 @@ function init_strategy_Wyvern takes nothing returns nothing
 endfunction
 function build_sequence_Wyvern takes nothing returns nothing
 if tier == 3 then
-call BuildUnit(25, uWYVERN, 42)
-call BuildUnit(1, hero[1], 80)
-call BuildUnit(1, hero[2], 60)
-call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(26, uWYVERN, 42)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+
 
       call BuildUpgr(1, uUPG_ORC_VENOM, 92)
 
@@ -1196,13 +1190,11 @@ call BuildUnit(1, uVOODOO_LOUNGE, 50)
 
 
 
-
 elseif tier == 2 then
-call BuildUnit(18, uWYVERN, 40)
-call BuildUnit(1, hero[1], 80)
-call BuildUnit(1, hero[2], 40)
-call BuildUnit(1, uFORTRESS, 20)
-call BuildUnit(1, uVOODOO_LOUNGE, 50)
+    call BuildUnit(18, uWYVERN, 40)
+    call BuildUnit(1, hero[1], 140)
+    call BuildUnit(1, hero[2], 130)
+    call BuildUnit(1, uFORTRESS, 45)
 
 
 
@@ -1228,10 +1220,9 @@ call BuildUnit(1, uVOODOO_LOUNGE, 50)
 
 else
 
-	call BuildFront(2, uORC_WATCH_TOWER, 44)
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(10, uGRUNT, 40)
-        call BuildUnit(1, uSTRONGHOLD, 50)
+      call BuildUnit(1, hero[1], 150)
+      call BuildUnit(10, uGRUNT, 40)
+      call BuildUnit(1, uSTRONGHOLD, 50)
 
 
 
@@ -1261,7 +1252,6 @@ function init_strategy_BarrackMix takes nothing returns nothing
 
     call AddHarass(2, 3, uGRUNT)
     call AddHarass(2, 4, uHEAD_HUNTER)
-    call AddHarass(2, 1, uCATAPULT)
     set distraction_group = 2
 
 
@@ -1297,23 +1287,23 @@ function init_strategy_BarrackMix takes nothing returns nothing
 endfunction
 function build_sequence_BarrackMix takes nothing returns nothing
 if tier == 3 then
-      call SetBuildReact(55, 2, uGRUNT, 4, uHEAD_HUNTER, (enemy_unarmored + enemy_air - enemy_normal), 4, 25, 105)
-      call SetBuildReact(30, 1, uGRUNT, 0, uCATAPULT, (enemy_unarmored + enemy_towers + enemy_casters)/2, 4, 25, 80)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
+      call SetBuildReact(36, 4, uGRUNT, 4, uHEAD_HUNTER, (enemy_unarmored + enemy_air - enemy_normal), 4, 25, 86)
+      call SetBuildReact(36, 1, uGRUNT, 0, uCATAPULT, (enemy_unarmored + enemy_towers + enemy_casters)/2, 4, 25, 86)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
       call BuildUpgr(Min(((TownCountDone(uGRUNT)/2)-2),1), uUPG_ORC_BERSERK, 70)
       call BuildUpgr(Min(((TownCountDone(uGRUNT)/2)-2),1), uUPG_ORC_PILLAGE, 50)
       call BuildUpgr(Min(((TownCountDone(uHEAD_HUNTER)/2)-2),1), uUPG_ORC_REGEN, 50)
       call BuildUpgr(Min(((TownCountDone(uGRUNT)/2)-1),3), uUPG_ORC_MELEE, 60)
       call BuildUpgr(Min(((TownCountDone(uHEAD_HUNTER)/2)-1),3), uUPG_ORC_RANGED, 60)
       call BuildUpgr(3, uUPG_ORC_ARMOR, 40)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
-      if not (c_enemy_total == c_enemy[R_ELF]) then
-        call BuildUpgr(3, uUPG_ORC_SPIKES, 20)
-      endif
 
-
+      // if not (c_enemy_total == c_enemy[R_ELF]) then
+      //   call BuildUpgr(3, uUPG_ORC_SPIKES, 20)
+      // endif
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -1348,22 +1338,23 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call SetBuildReact(30, 1, uGRUNT, 4, uHEAD_HUNTER, (enemy_unarmored + enemy_air - enemy_normal), 4, 25, 80)
-      call SetBuildReact(20, 1, uGRUNT, 0, uCATAPULT, (enemy_unarmored + enemy_towers + enemy_casters)/2, 4, 25, 70)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, uFORTRESS, 50)
+      call SetBuildReact(32, 1, uGRUNT, 4, uHEAD_HUNTER, (enemy_unarmored + enemy_air - enemy_normal), 4, 25, 82)
+      call SetBuildReact(22, 1, uGRUNT, 0, uCATAPULT, (enemy_unarmored + enemy_towers + enemy_casters)/2, 4, 25, 82)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, uFORTRESS, 45)
+       call BuildUnit(2, uWITCH_DOCTOR, 70)
       call BuildUpgr(Min(((TownCountDone(uGRUNT)/2)-2),1), uUPG_ORC_PILLAGE, 50)
       call BuildUpgr(Min(((TownCountDone(uHEAD_HUNTER)/2)-2),1), uUPG_ORC_REGEN, 50)
-      call BuildUpgr(Min(((TownCountDone(uGRUNT)/2)-1),2), uUPG_ORC_MELEE, 60)
-      call BuildUpgr(Min(((TownCountDone(uHEAD_HUNTER)/2)-1),2), uUPG_ORC_RANGED, 60)
+      call BuildUpgr(Min(((TownCountDone(uGRUNT)/2)-1),2), uUPG_ORC_MELEE, 45)
+      call BuildUpgr(Min(((TownCountDone(uHEAD_HUNTER)/2)-1),2), uUPG_ORC_RANGED, 45)
       call BuildUpgr(2, uUPG_ORC_ARMOR, 30)
       call BuildUpgr(Min(((TownCountDone(uGRUNT)/2)-2),1), uUPG_ORC_BERSERK, 70)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+
       if not (c_enemy_total == c_enemy[R_ELF]) then
         call BuildUpgr(2, uUPG_ORC_SPIKES, 10)
       endif
-
+      call BuildUpgr(1, uUPG_ORC_DOCS, 75)
 
 
 
@@ -1401,8 +1392,7 @@ else
 
       call BuildUpgr(Min(((TownCountDone(uGRUNT)/2)-2),1), uUPG_ORC_PILLAGE, 30)
       call SetBuildReact(30, 1, uGRUNT, 3, uHEAD_HUNTER, (enemy_unarmored + enemy_air - enemy_normal), 4, 16, 65)
-      call BuildUnit(1, uVOODOO_LOUNGE, 55)
-      call BuildUnit(1, hero[1], 130)
+      call BuildUnit(1, hero[1], 150)
       call BuildUnit(1, uSTRONGHOLD, 50)
       if not (c_enemy_total == c_enemy[R_ELF]) then
         call BuildUpgr(1, uUPG_ORC_SPIKES, 10)
@@ -1447,7 +1437,6 @@ function init_strategy_BestiaryMix takes nothing returns nothing
 
     call AddHarass(2, 3, uRAIDER)
     call AddHarass(2, 4, uWYVERN)
-    call AddHarass(2, 1, uKODO_BEAST)
     set distraction_group = 2
 
 
@@ -1477,12 +1466,13 @@ endfunction
 function build_sequence_BestiaryMix takes nothing returns nothing
 if tier == 3 then
 
-      call SetBuildReact(20, 2, uWYVERN, 2, uBATRIDER, (enemy_towers + enemy_unarmored)/2, 4, 25, 70)
-      call SetBuildReact(20, 2, uRAIDER, 2, uKODO_BEAST, enemy_heavyarmor - enemy_piercing, 4, 25, 70)
-      call SetBuildReact(40, 2, uWYVERN, 2, uRAIDER, (enemy_unarmored + enemy_towers + enemy_casters + enemy_piercing)/4, 4, 25, 75)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
+      call SetBuildReact(22, 2, uWYVERN, 2, uBATRIDER, (enemy_towers + enemy_unarmored)/2, 4, 25, 72)
+      call SetBuildReact(22, 2, uRAIDER, 2, uKODO_BEAST, enemy_heavyarmor - enemy_piercing, 4, 25, 72)
+      call SetBuildReact(30, 2, uWYVERN, 2, uRAIDER, (enemy_unarmored + enemy_towers + enemy_casters + enemy_piercing)/4, 4, 25, 70)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
       call BuildUpgr(Min(TownCountDone(uKODO_BEAST),1), uUPG_ORC_WAR_DRUMS, 70)
       call BuildUpgr(Min(((TownCountDone(uRAIDER)/2)-2),1), uUPG_ORC_PILLAGE, 50)
       call BuildUpgr(Min(((TownCountDone(uRAIDER)/2)-2),1), uUPG_ORC_ENSNARE, 50)
@@ -1491,12 +1481,11 @@ if tier == 3 then
       call BuildUpgr(Min(((TownCountDone(uRAIDER)/2)-1),3), uUPG_ORC_MELEE, 60)
       call BuildUpgr(Min(((TownCountDone(uWYVERN)/2)-1),3), uUPG_ORC_RANGED, 60)
       call BuildUpgr(3, uUPG_ORC_ARMOR, 40)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
-      if not (c_enemy_total == c_enemy[R_ELF]) then
-        call BuildUpgr(3, uUPG_ORC_SPIKES, 20)
-      endif
 
-
+      // if not (c_enemy_total == c_enemy[R_ELF]) then
+      //   call BuildUpgr(3, uUPG_ORC_SPIKES, 20)
+      // endif
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -1523,20 +1512,21 @@ elseif tier == 2 then
 
       call SetBuildReact(20, 1, uWYVERN, 1, uBATRIDER, (enemy_towers + enemy_unarmored)/2, 4, 25, 70)
       call SetBuildReact(20, 1, uRAIDER, 1, uKODO_BEAST, enemy_heavyarmor - enemy_piercing, 4, 25, 70)
-      call SetBuildReact(30, 1, uWYVERN, 1, uRAIDER, (enemy_unarmored + enemy_towers + enemy_casters + enemy_piercing)/4, 4, 25, 75)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
+      call SetBuildReact(30, 1, uWYVERN, 1, uRAIDER, (enemy_unarmored + enemy_towers + enemy_casters + enemy_piercing)/4, 4, 25, 70)
+      call BuildUnit(1, hero[1], 130)
+      call BuildUnit(1, hero[2], 120)
       call BuildUnit(1, uFORTRESS, 45)
+      call BuildUnit(2, uWITCH_DOCTOR, 70)
       call BuildUpgr(Min(((TownCountDone(uRAIDER)/2)-2),1), uUPG_ORC_PILLAGE, 50)
       call BuildUpgr(Min(((TownCountDone(uRAIDER)/2)-2),1), uUPG_ORC_ENSNARE, 20)
       call BuildUpgr(Min(((TownCountDone(uRAIDER)/2)-1),2), uUPG_ORC_MELEE, 60)
       call BuildUpgr(Min(((TownCountDone(uWYVERN)/2)-1),2), uUPG_ORC_RANGED, 60)
       call BuildUpgr(2, uUPG_ORC_ARMOR, 30)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+
       if not (c_enemy_total == c_enemy[R_ELF]) then
         call BuildUpgr(2, uUPG_ORC_SPIKES, 10)
       endif
-
+      call BuildUpgr(1, uUPG_ORC_DOCS, 75)
 
 
 
@@ -1561,12 +1551,11 @@ elseif tier == 2 then
 
 
 else
-
+      call BuildUnit(10, uGRUNT, 50)
       call BuildUpgr(Min(((TownCountDone(uRAIDER)/2)-2),1), uUPG_ORC_PILLAGE, 30)
       call BuildUnit(2, uORC_WATCH_TOWER, 60)
-      call BuildUnit(1, uVOODOO_LOUNGE, 55)
-      call BuildUnit(1, hero[1], 70)
-      call BuildUnit(1, uSTRONGHOLD, 80)
+      call BuildUnit(1, hero[1], 150)
+      call BuildUnit(1, uSTRONGHOLD, 55)
       if not (c_enemy_total == c_enemy[R_ELF]) then
         call BuildUpgr(1, uUPG_ORC_SPIKES, 10)
       endif
@@ -1601,7 +1590,6 @@ endfunction
 function init_strategy_AntiPierce takes nothing returns nothing
 
     call AddHarass(2, 2, uGRUNT)
-    call AddHarass(2, 1, uSHAMAN)
     set distraction_group = 2
 
 
@@ -1617,14 +1605,17 @@ endfunction
 function build_sequence_AntiPierce takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
       call BuildUnit(13, uTAUREN, 50)
       call BuildUnit(4, uRAIDER, 50)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(3, uSPIRIT_WALKER, 48)
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
 
-
-
+      call BuildUnit(4, uWITCH_DOCTOR, 70)
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
+      call BuildUpgr(2, uUPG_ORC_SWALKER, 75)
 
 
 
@@ -1634,13 +1625,16 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
       call BuildUnit(15, uGRUNT, 50)
       call BuildUnit(4, uRAIDER, 50)
-      call BuildUnit(1, uFORTRESS, 50)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, uFORTRESS, 45)
+      call BuildUnit(2, uSPIRIT_WALKER, 48)
+      call BuildUnit(2, uWITCH_DOCTOR, 70)
 
+      call BuildUpgr(1, uUPG_ORC_DOCS, 75)
+      call BuildUpgr(1, uUPG_ORC_SWALKER, 75)
 
 
 
@@ -1653,8 +1647,8 @@ elseif tier == 2 then
 else
       
       call BuildUnit(10, uGRUNT, 50)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, uSTRONGHOLD, 60)
+      call BuildUnit(1, hero[1], 150)
+      call BuildUnit(1, uSTRONGHOLD, 55)
 
 
 
@@ -1691,16 +1685,15 @@ endfunction
 function build_sequence_AntiAir takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
       call BuildUnit(15, uWYVERN, 50)
       call BuildUnit(15, uBATRIDER, 55)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
 
-
-
-
-
+      call BuildUpgr(1, uUPG_ORC_VENOM, 75)
+      call BuildUpgr(1, uUPG_ORC_FIRE, 15)
+      call BuildUpgr(1, uUPG_ORC_REGEN, 10)
 
 
 
@@ -1712,13 +1705,13 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(10, uWYVERN, 50)
-      call BuildUnit(15, uBATRIDER, 55)
-      call BuildUnit(1, uFORTRESS, 50)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, hero[1], 130)
+      call BuildUnit(1, hero[2], 120)
+      call BuildUnit(12, uWYVERN, 50)
+      call BuildUnit(12, uBATRIDER, 55)
+      call BuildUnit(1, uFORTRESS, 45)
 
+      call BuildUpgr(1, uUPG_ORC_REGEN, 10)
 
 
 
@@ -1735,7 +1728,7 @@ elseif tier == 2 then
 else
       
       call BuildUnit(12, uHEAD_HUNTER, 38)
-      call BuildUnit(1, hero[1], 80)
+      call BuildUnit(1, hero[1], 150)
       call BuildUnit(1, uSTRONGHOLD, 50)
 
 
@@ -1757,7 +1750,6 @@ endfunction
 
 function init_strategy_OAntiTower takes nothing returns nothing
 
-    call AddHarass(2, 3, uCATAPULT)
     call AddHarass(2, 3, uBATRIDER)
     set distraction_group = 2
 
@@ -1782,14 +1774,17 @@ endfunction
 function build_sequence_OAntiTower takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(15, uCATAPULT, 50)
-      call BuildUnit(15, uBATRIDER, 50)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(6, uCATAPULT, 50)
+      call BuildUnit(13, uRAIDER, 50)
+      call BuildUnit(13, uBATRIDER, 50)
 
-
-
+      call BuildUpgr(1, uUPG_ORC_NAPTHA, 70)
+      call BuildUpgr(1, uUPG_ORC_FIRE, 70)
+      call BuildUpgr(1, uUPG_ORC_PILLAGE, 60)
+      call BuildUpgr(1, uUPG_ORC_ENSNARE, 10)
 
 
 
@@ -1807,13 +1802,15 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(12, uCATAPULT, 50)
-      call BuildUnit(12, uBATRIDER, 50)
-      call BuildUnit(1, uFORTRESS, 50)
-      call BuildUnit(1, uVOODOO_LOUNGE, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(4, uCATAPULT, 50)
+      call BuildUnit(10, uRAIDER, 50)
+      call BuildUnit(10, uBATRIDER, 50)
+      call BuildUnit(1, uFORTRESS, 45)
 
+      call BuildUpgr(1, uUPG_ORC_PILLAGE, 60)
+      call BuildUpgr(1, uUPG_ORC_ENSNARE, 10)
 
 
 
@@ -1835,9 +1832,9 @@ else
       
       call BuildUnit(10, uGRUNT, 40)
       call BuildUnit(4, uCATAPULT, 48)
-      call BuildUnit(1, hero[1], 80)
+      call BuildUnit(1, hero[1], 150)
       call BuildUnit(1, uSTRONGHOLD, 50)
-
+      call BuildUpgr(1, uUPG_ORC_PILLAGE, 60)
 
 
 
@@ -1887,19 +1884,20 @@ endfunction
 function build_sequence_VersusHuman takes nothing returns nothing
 if tier == 3 then
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(1, hero[2], 70)
-	call BuildUnit(15, uRAIDER, 40)
-	call BuildUnit(15, uSPIRIT_WALKER, 40)
-	if enemy_air >= 10 then
-		call BuildUnit(10, uBATRIDER, 40)
-      		call BuildUpgr(1, uUPG_ORC_FIRE, 60)
-	endif
+    call BuildUnit(1, hero[1], 140)
+    call BuildUnit(1, hero[2], 130)
+    call BuildUnit(1, hero[3], 120)
+    call BuildUnit(15, uRAIDER, 40)
+    call BuildUnit(15, uSPIRIT_WALKER, 40)
+    call BuildUnit(3, uWITCH_DOCTOR, 70)
+    if enemy_air >= 10 then
+      call BuildUnit(10, uBATRIDER, 40)
+      call BuildUpgr(1, uUPG_ORC_FIRE, 60)
+    endif
 
-      	call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
-
-
-
+    call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
+    call BuildUpgr(2, uUPG_ORC_DOCS, 75)
+    call BuildUpgr(2, uUPG_ORC_SWALKER, 30)
 
 
 
@@ -1920,20 +1918,21 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(1, hero[2], 65)
-	call BuildUnit(10, uRAIDER, 50)
-	call BuildUnit(10, uSPIRIT_WALKER, 40)
-	if enemy_air >= 10 then
-		call BuildUnit(10, uBATRIDER, 40)
-	else
-		call BuildUnit(15, uRAIDER, 40)
-      		call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
-	endif
-        call BuildUnit(1, uFORTRESS, 45)
+    call BuildUnit(1, hero[1], 140)
+    call BuildUnit(1, hero[2], 130)
+    call BuildUnit(10, uRAIDER, 50)
+    call BuildUnit(10, uSPIRIT_WALKER, 40)
+    if enemy_air >= 10 then
+      call BuildUnit(10, uBATRIDER, 40)
+    else
+      call BuildUnit(12, uRAIDER, 40)
+      call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
+    endif
+    call BuildUnit(1, uFORTRESS, 50)
+    call BuildUnit(2, uWITCH_DOCTOR, 70)
 
-	call BuildUpgr(1, uUPG_ORC_SWALKER, 60)
-
+    call BuildUpgr(1, uUPG_ORC_SWALKER, 60)
+    call BuildUpgr(1, uUPG_ORC_DOCS, 75)
 
 
 
@@ -1957,9 +1956,9 @@ elseif tier == 2 then
 
 else
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(10, uGRUNT, 40)
-        call BuildUnit(1, uSTRONGHOLD, 50)
+    call BuildUnit(1, hero[1], 150)
+    call BuildUnit(10, uGRUNT, 40)
+    call BuildUnit(1, uSTRONGHOLD, 50)
 
 
 
@@ -2010,19 +2009,19 @@ endfunction
 function build_sequence_VersusUndead takes nothing returns nothing
 if tier == 3 then
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(1, hero[2], 70)
-	call BuildUnit(10, uRAIDER, 50)
-	call BuildUnit(10, uGRUNT, 50)
-	call BuildUnit(10, uBATRIDER, 40)
-	call BuildUnit(2, uKODO_BEAST, 43)
-      	call BuildUnit(1, uZEPPELIN, 55)
+    call BuildUnit(1, hero[1], 140)
+    call BuildUnit(1, hero[2], 130)
+    call BuildUnit(1, hero[3], 120)
+    call BuildUnit(12, uRAIDER, 50)
+    call BuildUnit(12, uGRUNT, 50)
+    call BuildUnit(10, uBATRIDER, 40)
+    call BuildUnit(2, uKODO_BEAST, 43)
+    call BuildUnit(3, uWITCH_DOCTOR, 70)
 
-      	call BuildUpgr(1, uUPG_ORC_FIRE, 60)
-      	call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
-      call BuildUpgr(1, uUPG_ORC_BERSERK, 70)
-
-
+    call BuildUpgr(1, uUPG_ORC_FIRE, 60)
+    call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
+    call BuildUpgr(1, uUPG_ORC_BERSERK, 70)
+    call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -2038,17 +2037,18 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(1, hero[2], 65)
-        call BuildUnit(1, uZEPPELIN, 40)
-	call BuildUnit(10, uRAIDER, 40)
-	call BuildUnit(10, uGRUNT, 50)
-	call BuildUnit(10, uBATRIDER, 40)
-	call BuildUnit(2, uKODO_BEAST, 43)
-        call BuildUnit(1, uFORTRESS, 45)
+    call BuildUnit(1, hero[1], 130)
+    call BuildUnit(1, hero[2], 120)
+    call BuildUnit(10, uRAIDER, 40)
+    call BuildUnit(10, uGRUNT, 50)
+    call BuildUnit(8, uBATRIDER, 40)
+    call BuildUnit(1, uKODO_BEAST, 43)
+    call BuildUnit(2, uWITCH_DOCTOR, 70)
 
-      	call BuildUpgr(1, uUPG_ORC_ENSNARE, 60)
-      call BuildUpgr(1, uUPG_ORC_BERSERK, 70)
+    call BuildUnit(1, uFORTRESS, 45)
+    call BuildUpgr(1, uUPG_ORC_ENSNARE, 60)
+    call BuildUpgr(1, uUPG_ORC_BERSERK, 70)
+    call BuildUpgr(1, uUPG_ORC_DOCS, 75)
 
 
 
@@ -2066,9 +2066,9 @@ elseif tier == 2 then
 
 else
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(10, uGRUNT, 40)
-        call BuildUnit(1, uSTRONGHOLD, 50)
+      call BuildUnit(1, hero[1], 150)
+      call BuildUnit(10, uGRUNT, 40)
+      call BuildUnit(1, uSTRONGHOLD, 50)
 
 
 
@@ -2111,16 +2111,17 @@ endfunction
 function build_sequence_VersusElf takes nothing returns nothing
 if tier == 3 then
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(1, hero[2], 70)
-	call BuildUnit(15, uRAIDER, 40)
-	call BuildUnit(10, uSPIRIT_WALKER, 50)
-        call BuildUnit(5, uCATAPULT, 60)
-
-      	call BuildUpgr(1, uUPG_ORC_NAPTHA, 70)
-      	call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
-
-
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(16, uRAIDER, 40)
+      call BuildUnit(10, uSPIRIT_WALKER, 50)
+      call BuildUnit(4, uCATAPULT, 60)
+      call BuildUnit(3, uWITCH_DOCTOR, 70)
+  
+      call BuildUpgr(1, uUPG_ORC_NAPTHA, 70)
+      call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
+      call BuildUpgr(2, uUPG_ORC_DOCS, 75)
 
 
 
@@ -2131,16 +2132,17 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(1, hero[2], 65)
-	call BuildUnit(10, uRAIDER, 50)
-	call BuildUnit(10, uSPIRIT_WALKER, 40)
-        call BuildUnit(5, uCATAPULT, 60)
-        call BuildUnit(1, uFORTRESS, 45)
+    call BuildUnit(1, hero[1], 130)
+    call BuildUnit(1, hero[2], 120)
+    call BuildUnit(12, uRAIDER, 50)
+    call BuildUnit(10, uSPIRIT_WALKER, 40)
+    call BuildUnit(3, uCATAPULT, 60)
+    call BuildUnit(2, uWITCH_DOCTOR, 70)
 
-	call BuildUpgr(1, uUPG_ORC_SWALKER, 60)
-      	call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
-
+    call BuildUnit(1, uFORTRESS, 45)
+    call BuildUpgr(1, uUPG_ORC_SWALKER, 60)
+    call BuildUpgr(1, uUPG_ORC_ENSNARE, 70)
+    call BuildUpgr(1, uUPG_ORC_DOCS, 75)
 
 
 
@@ -2153,9 +2155,9 @@ elseif tier == 2 then
 
 else
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(10, uGRUNT, 40)
-        call BuildUnit(1, uSTRONGHOLD, 50)
+    call BuildUnit(1, hero[1], 150)
+    call BuildUnit(10, uGRUNT, 40)
+    call BuildUnit(1, uSTRONGHOLD, 50)
 
 
 
@@ -2170,3 +2172,4 @@ else
 
 endif
 endfunction
+
