@@ -12,16 +12,7 @@ function global_init_strategy takes nothing returns nothing
     call AddBlock(1, BLACKSMITH, false, 0, WATCH_TOWER, 36)
     call AddHarass(1, 2, FOOTMAN)
     call AddHarass(3, 2, GRYPHON)
-    if militia_expanding or militia_state > 0 then
-	call AddBlock(2, TOWN_HALL, false, 0, KEEP, 36)
-    endif
-
-
-
-
-
-
-
+    call AddHarass(4, 1, PALADIN)
 
 
 
@@ -111,24 +102,28 @@ function global_build_sequence takes nothing returns nothing
             call BuildUnit(1, CANNON_TOWER, 40)
       endif
 
+      // Global Items
       call BuildItem(1, SCROLL_OF_REGENERATION, 90)
-      call BuildItem(2, SCROLL_OF_REGENERATION, 50)
       call BuildItem(1, M_SCROLL_OF_HEALING, 40)
 
       call BuildItem(1, SCROLL_OF_PROTECTION, 40)
       call BuildItem(1, POTION_OF_LESSER_INVULNERBILITY, 50)
       call BuildItem(1, LESSER_CLARITY_POTION, 35)
-      if tier == 1 then
-	call BuildItem(1, M_TOWN_PORTAL, 100)
+      call BuildItem(1, M_TOWN_PORTAL, 100)
+      if tier >= 2 then
+            call BuildItem(1, HEALING_POTION, 80)
+            call BuildItem(1, TOWN_PORTAL, 180)
+            if c_ally_total > 0 then
+                  call BuildItem(1, STAFF_OF_PRESERVATION, 30)
+            endif
       endif
-      if tier > 1 then
-      call BuildItem(1, HEALING_POTION, 80)
-      call BuildItem(1, TOWN_PORTAL, 150)
+      if tier >= 3 then
+            call BuildItem(1, STAFF_OF_SANCTUARY, 80)
       endif
-      if tier == 3 then
-      call BuildItem(1, STAFF_OF_SANCTUARY, 70)
+      if GetGold() > 1000 then
+            call BuildItem(1, STAFF_OF_TELEPORTATION, 35)
       endif
-
+	// DYNAMIC
 	call ResetDynamicSystem()
 	if tier == 1 then
 		call AddUnitToAntiair(RIFLEMAN,29)
@@ -179,7 +174,7 @@ function global_build_sequence takes nothing returns nothing
 		call AddUnitToAntiair(COPTER,2+GetUpgradeLevel(old_id[UPG_FLAK]))
 		call AddUnitToAntiair(HUMAN_DRAGON_HAWK,5)
 		call AddUnitToAntiair(ROCKET_TANK,GetUpgradeLevel(old_id[UPG_TANK]))
-		call AddUnitToAnticasters(SPELL_BREAKER,5)
+		call AddUnitToAnticasters(SPELL_BREAKER,5+GetUpgradeLevel(old_id[UPG_CONT_MAGIC]))
 		call AddUnitToAnticasters(PRIEST,1)
 		call AddUnitToAntitowers(MORTAR,6)
 		call AddUnitToAntitowers(HUMAN_DRAGON_HAWK,1)
@@ -216,50 +211,50 @@ function global_build_sequence takes nothing returns nothing
 
 	// TIER 1 UPGRADES
 	//--------------------------------------------------------
-		if tier == 1 then
-		endif
-        	call BuildAdvUpgr2(1, UPG_DEFEND, 1,TownCountDone(FOOTMAN), 0.33, 15, 60)
-		//if towerrush then
-		//	call BuildUpgr(1, UPG_MASONRY, 100)
-		//endif		
-		call BuildAdvUpgr(3, UPG_MASONRY,1,1,1,5,20)
-		call BuildAdvUpgr2(3, UPG_MELEE, 1,TownCountDone(FOOTMAN) + TownCountDone(KNIGHT) + TownCountDone(SPELL_BREAKER) + TownCountDone(HUMAN_DRAGON_HAWK) + TownCountDone(GRYPHON), 5,5,35)
-		call BuildAdvUpgr2(3, UPG_ARMOR, 1,TownCountDone(FOOTMAN) + TownCountDone(KNIGHT) + TownCountDone(SPELL_BREAKER) + TownCountDone(COPTER) + TownCountDone(TANK), 5,5,35)
-   		call BuildAdvUpgr2(3, UPG_RANGED, 1,TownCountDone(RIFLEMAN) + TownCountDone(COPTER) + TownCountDone(TANK) + TownCountDone(MORTAR), 5,5,35)
-  		call BuildAdvUpgr2(3, UPG_LEATHER, 1,TownCountDone(RIFLEMAN) + TownCountDone(GRYPHON) + TownCountDone(HUMAN_DRAGON_HAWK) + TownCountDone(MORTAR), 5,5,35)
+    if tier == 1 then
+    endif
+    call BuildAdvUpgr2(1, UPG_DEFEND, 1,TownCountDone(FOOTMAN), 0.33, 15, 50)
+    call BuildAdvUpgr(1, UPG_WOOD,1,1,1,5,40)
+    call BuildAdvUpgr(3, UPG_MASONRY,1,1,1,5,20)
+    call BuildAdvUpgr2(3, UPG_MELEE, 1,TownCountDone(FOOTMAN) + TownCountDone(KNIGHT) + TownCountDone(SPELL_BREAKER) + TownCountDone(HUMAN_DRAGON_HAWK) + TownCountDone(GRYPHON), 5,5,40)
+    call BuildAdvUpgr2(3, UPG_ARMOR, 1,TownCountDone(FOOTMAN) + TownCountDone(KNIGHT) + TownCountDone(SPELL_BREAKER) + TownCountDone(COPTER) + TownCountDone(TANK), 5,5,40)
+    call BuildAdvUpgr2(3, UPG_RANGED, 1,TownCountDone(RIFLEMAN) + TownCountDone(COPTER) + TownCountDone(TANK) + TownCountDone(MORTAR), 3,5,40)
+    call BuildAdvUpgr2(3, UPG_LEATHER, 1,TownCountDone(RIFLEMAN) + TownCountDone(GRYPHON) + TownCountDone(HUMAN_DRAGON_HAWK) + TownCountDone(MORTAR), 3,5,40)
 
     // TIER 2 UPGRADES
     //--------------------------------------------------------
-	if tier >= 2 then
-		call BuildUnit(Max(2 - TownCountDone(merc_healer),0), PRIEST, 40)
-	   	call BuildUpgr(1, UPG_WOOD, 40) 
-	endif
-		call BuildAdvUpgr2(1, UPG_SENTINEL, 2, TownCountDone(WATCH_TOWER) + c_enemy[R_ELF],2, 5, 25) 
-		call BuildAdvUpgr2(1, UPG_BOMBS, 2,TownCountDone(COPTER),1,5, 40)
-        call BuildAdvUpgr2(1, UPG_FLAK, 2,TownCountDone(COPTER),0.33,15, 40)
-		call BuildAdvUpgr2(1, UPG_GUN_RANGE, 2,TownCountDone(RIFLEMAN),1,10, 40)
-		call BuildAdvUpgr2(1, UPG_CONT_MAGIC, 2,TownCountDone(SPELL_BREAKER), 0.5, 10, 50)
-		call BuildAdvUpgr2(1, UPG_SIGHT, 2,TownCountDone(MORTAR),1,5, 25)
-		call BuildAdvUpgr2(2, UPG_PRAYING, 2,TownCountDone(PRIEST), 0.33, 15, 80)
-		call BuildAdvUpgr2(2, UPG_SORCERY,2,TownCountDone(SORCERESS), 0.33, 15, 80)	
+    if tier >= 2 then
+    endif
+    call BuildAdvUpgr2(1, UPG_SENTINEL, 2, TownCountDone(WATCH_TOWER) + c_enemy[R_ELF],2, 5, 45) 
+    call BuildAdvUpgr2(1, UPG_FLAK, 2,TownCountDone(COPTER),0.33,15, 55)
+    call BuildAdvUpgr2(1, UPG_GUN_RANGE, 2,TownCountDone(RIFLEMAN),1,10, 50)
+    call BuildAdvUpgr2(1, UPG_SIGHT, 2,TownCountDone(MORTAR),1,5, 30)
+    call BuildAdvUpgr2(2, UPG_PRAYING, 2,TownCountDone(PRIEST), 0.33, 15, 95)
+    call BuildAdvUpgr2(2, UPG_SORCERY,2,TownCountDone(SORCERESS), 0.33, 15, 95)
 
     // TIER 3 UPGRADES
     //--------------------------------------------------------
-		if tier == 3 then
-	   	call BuildUpgr(2, UPG_WOOD, 40)
-		endif
-		call BuildAdvUpgr2(1, UPG_FRAGS, 3,TownCountDone(MORTAR), 0.33,15, 40)
-		call BuildAdvUpgr2(1, UPG_HAMMERS, 3,TownCountDone(GRYPHON), 0.33,15, 60)
-		call BuildAdvUpgr2(1, UPG_BREEDING, 3,TownCountDone(KNIGHT) + TownCountDone(GRYPHON) + TownCountDone(HUMAN_DRAGON_HAWK),1,15, 60)
-		call BuildAdvUpgr2(1, UPG_TANK, 3, TownCountDone(TANK),0.25,15, 50)
+    if tier == 3 then
+    endif
+    call BuildAdvUpgr2(1, UPG_CONT_MAGIC, 3,TownCountDone(SPELL_BREAKER), 0.5, 10, 60)
+    call BuildAdvUpgr2(1, UPG_BOMBS, 3,TownCountDone(COPTER),1,5, 45)
+    call BuildAdvUpgr2(1, UPG_FRAGS, 3,TownCountDone(MORTAR), 0.33,15, 55)
+    call BuildAdvUpgr2(1, UPG_HAMMERS, 3,TownCountDone(GRYPHON), 0.33,15, 75)
+    call BuildAdvUpgr2(1, UPG_BREEDING, 3,TownCountDone(KNIGHT) + TownCountDone(GRYPHON) + TownCountDone(HUMAN_DRAGON_HAWK),1,15, 75)
+    call BuildAdvUpgr2(1, UPG_TANK, 3, TownCountDone(TANK),0.25,15, 65)
+    call BuildAdvUpgr2(1, UPG_CLOUD, 3, TownCountDone(HUMAN_DRAGON_HAWK),0.33,15, 70)
 
       // Global Mercenaries
-        call BuildUnit(Max(2 - TownCountDone(PRIEST),0), merc_healer, 40)
-		
 
-          // Harass
-          call Harass(1, HARASS_TARGET_PEONS, true, 5, 0.75, 0, GetPlayerRace(nearest_enemy) != RACE_UNDEAD and TownCountDone(FOOTMAN) > 6, 50, 80)
-          call Harass(3, HARASS_TARGET_PEONS, true, 5, 0.75, 0, GetPlayerRace(nearest_enemy) != RACE_UNDEAD and TownCountDone(GRYPHON) > 4, 80, 100)
+    // Harass
+    if not towerrush and not town_threatened then
+      call Harass(1, HARASS_TARGET_PEONS, true, 5, 0.75, 0, GetPlayerRace(nearest_enemy) != RACE_UNDEAD , 50, 80)
+      call Harass(3, HARASS_TARGET_PEONS, true, 5, 0.75, 0, GetPlayerRace(nearest_enemy) != RACE_UNDEAD , 80, 100)
+      if GetUnitCountDone(old_id[PALADIN]) > 0 then
+        call Harass(4, HARASS_TARGET_PEONS, true, 4, 0.75, 0, GetPlayerRace(nearest_enemy) == RACE_UNDEAD , 50, 80)
+      endif
+    endif
+
 
 
 
@@ -332,7 +327,6 @@ endfunction
 function init_strategy_NormalHuman takes nothing returns nothing
 
     call AddHarass(2, 4, FOOTMAN)
-    call AddHarass(2, 1, RIFLEMAN)
     set distraction_group = 2
 
 
@@ -359,27 +353,21 @@ endfunction
 function build_sequence_NormalHuman takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(3, RIFLEMAN, 50)
+      call BuildUnit(7, GRYPHON, 40)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(5, RIFLEMAN, 50)
       call BuildUnit(2, MORTAR, 10)
       call BuildUnit(2, COPTER, 10)
       call BuildUnit(2, HUMAN_DRAGON_HAWK, 40)
       call BuildUnit(2, SPELL_BREAKER, 40)
-      call BuildUnit(6, KNIGHT, 55)
-      call BuildUnit(7, GRYPHON, 40)
-      call BuildUnit(4, RIFLEMAN, 50)
+      call BuildUnit(7, KNIGHT, 55)
       call BuildUnit(3, SORCERESS, 40)
-      call BuildUnit(2, PRIEST, 40)
-      call BuildUnit(1, CASTLE, 10)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, ARCANE_VAULT, 70)
-      call BuildFront(1, ARCANE_TOWER, 55)
-      call BuildUnit(1, ZEPPELIN, 50)
-
-
-
-
+      call BuildUnit(3, PRIEST, 40)
+      call BuildUpgr(2, UPG_SORCERY, 58)
+      call BuildUpgr(2, UPG_PRAYING, 58)
+      call BuildUpgr(1, UPG_BREEDING, 58)
 
 
 
@@ -403,19 +391,18 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(1, hero[1], 80)
       call BuildUnit(8, FOOTMAN, 65)
       call BuildUnit(4, RIFLEMAN, 55)
-      call BuildUnit(1, ARCANE_VAULT, 57)
-      call BuildFront(1, ARCANE_TOWER, 57)
-      call BuildUnit(1, hero[2], 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(2, SORCERESS, 40)
+      call BuildUnit(2, PRIEST, 40)
       call BuildUnit(2, MORTAR, 45)
+      call BuildUnit(2, SPELL_BREAKER, 40)
       call BuildUnit(1, CASTLE, 45)
-
-
-
-
-
+      call BuildUpgr(1, UPG_SORCERY, 58)
+      call BuildUpgr(1, UPG_PRAYING, 58)
+      call BuildUpgr(1, UPG_GUN_RANGE, 58)
 
 
 
@@ -440,17 +427,12 @@ elseif tier == 2 then
 
 
 else
-// THIS IS REPLICA OF BLIZZARDS AI
 
-        call BuildUnit(  1, hero[1], 80      )
+        call BuildUnit(  1, hero[1], 150      )
         call BuildUnit(  8, FOOTMAN , 65   )
-        call BuildUnit(  3, RIFLEMAN , 55    )
-        call BuildUnit(  1, ARCANE_VAULT, 54 )
-        call BasicExpansionAM( GetMinesOwned() < 2 ,TOWN_HALL, 53)
-        call BuildFront(1, ARCANE_TOWER, 45)
+        call BuildUnit(  4, RIFLEMAN , 55    )
         call BuildUnit(  4, RIFLEMAN, 43    )
-        call BuildUnit(  1, KEEP, 42        )
-
+        call BuildUnit(  1, KEEP, 55        )
 
 
 
@@ -481,8 +463,6 @@ endfunction
 //============================================================================
 function init_strategy_MassSp takes nothing returns nothing
 
-    call AddHarass(2, 2, SORCERESS)
-    set distraction_group = 2
 
 
 
@@ -514,16 +494,17 @@ endfunction
 function build_sequence_MassSp takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(22, SORCERESS, 40)
-      call BuildUnit(19, PRIEST, 44)
-      call BuildUnit(1, CASTLE, 10)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, ARCANE_VAULT, 50)
+      call BuildUnit(15, SORCERESS, 52)
+      call BuildUnit(15, PRIEST, 50)
+      call BuildUnit(4, SPELL_BREAKER, 74)
+      call BuildUnit(8, RIFLEMAN, 65)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+
       call BuildUnit(3, ARCANE_TOWER, 55)
-      call BuildUpgr(2, UPG_SORCERY, 84)
-      call BuildUpgr(2, UPG_PRAYING, 82)
+      call BuildUpgr(2, UPG_SORCERY, 80)
+      call BuildUpgr(2, UPG_PRAYING, 80)
 
 
 
@@ -555,15 +536,17 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call BuildUnit(1, CASTLE, 30)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
+      call BuildUnit(1, CASTLE, 45)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
       call BuildUnit(10, SORCERESS, 44)
       call BuildUnit(10, PRIEST, 44)
-      call BuildUnit(1, ARCANE_VAULT, 60)
+      call BuildUnit(4, FOOTMAN, 55)
+      call BuildUnit(4, RIFLEMAN, 55)
+
       call BuildUnit(2, ARCANE_TOWER, 55)
-      call BuildUpgr(1, UPG_SORCERY, 64)
-      call BuildUpgr(1, UPG_PRAYING, 64)
+      call BuildUpgr(1, UPG_SORCERY, 58)
+      call BuildUpgr(1, UPG_PRAYING, 58)
 
 
 
@@ -596,11 +579,9 @@ elseif tier == 2 then
 
 else
 
-	call BuildUnit(1, hero[1], 80)
-        call SetBuildReact(16, 4, FOOTMAN, 0, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-        call BuildUnit(1, KEEP, 50)
-        call BuildFront(1, ARCANE_TOWER, 50)
-
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
+      call BuildUnit(1, KEEP, 50)
 
 
 
@@ -660,16 +641,19 @@ endfunction
 function build_sequence_Knight takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(1, hero[1], 90)
-      call BuildUnit(1, hero[2], 80)
-      call BuildUnit(1, hero[3], 80)
-      call basic_melee(70, 36)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+      call BuildUnit(12, KNIGHT, 90)
+      call BuildUnit(14, COPTER, 100)
+      call BuildUnit(6, GRYPHON, 40)
       call BuildUnit(6, PRIEST, 69)
-      call BuildUnit(1, ARCANE_VAULT, 50)
-      call BuildUnit(1, ZEPPELIN, 50)
 
-      call BuildUpgr(1, UPG_BREEDING, 70)
-
+      call BuildUpgr(1, UPG_FLAK, 115)
+      call BuildUpgr(1, UPG_BOMBS, 105)
+      call BuildUpgr(1, UPG_BREEDING, 80)      
+      call BuildUpgr(1, UPG_HAMMERS, 55)
+      call BuildUpgr(2, UPG_PRAYING, 58)
 
 
 
@@ -690,15 +674,16 @@ if tier == 3 then
 
 
 elseif tier == 2 then
-      call BuildUnit(1, hero[1], 90)
-      call BuildUnit(1, hero[2], 80)
-      call basic_melee(40, 36)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(8, FOOTMAN, 65)
+      call BuildUnit(6, RIFLEMAN, 55)
+      call BuildUnit(8, COPTER, 100)
       call BuildUnit(4, PRIEST, 40)
-      call BuildFront(2, GUARD_TOWER, 55)
       call BuildUnit(1, CASTLE,70)
-      call BuildUnit(1, ARCANE_VAULT, 60)
-      call BuildUnit(1, ZEPPELIN, 50)
 
+      call BuildUpgr(1, UPG_PRAYING, 58)
+      call BuildUpgr(1, UPG_FLAK, 115)
 
 
 
@@ -722,12 +707,9 @@ elseif tier == 2 then
 
 else
 
-      call BuildUnit(1, hero[1], 80)
-      call basic_melee(24, 38)
-      call BuildFront(1, GUARD_TOWER, 45)
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
       call BuildUnit(1, KEEP,50)
-      call BuildFront(1, ARCANE_TOWER, 55)
-
 
 
 
@@ -789,19 +771,16 @@ endfunction
 function build_sequence_Gryph takes nothing returns nothing
 if tier == 3 then
 
-      call SetBuildReact(20, 6, GRYPHON, 3, HUMAN_DRAGON_HAWK, enemy_air, 8, 16, 50)
+      call SetBuildReact(24, 6, GRYPHON, 3, HUMAN_DRAGON_HAWK, enemy_air, 8, 16, 50)
+      call BuildUnit(6, KNIGHT, 50)
       call BuildUnit(4, PRIEST, 60)
-      call BuildUnit(1, CASTLE, 10)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, ARCANE_VAULT, 50)
-      call BuildUnit(1, ZEPPELIN, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
 
-      call BuildUpgr(1, UPG_HAMMERS, 70)
-
-
-
+      call BuildUpgr(1, UPG_HAMMERS, 55)
+      call BuildUpgr(1, UPG_BREEDING, 55)
+      call BuildUpgr(2, UPG_PRAYING, 58)
 
 
 
@@ -828,14 +807,14 @@ if tier == 3 then
 
 
 elseif tier == 2 then
-      call BuildUnit(8, FOOTMAN, 60)
+      call BuildUnit(6, FOOTMAN, 60)
+      call BuildUnit(6, PRIEST, 55)
       call BuildUnit(6, HUMAN_DRAGON_HAWK, 50)
-      call BuildUnit(1, CASTLE, 55)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, ARCANE_VAULT, 60)
-      call BuildUnit(1, ZEPPELIN, 50)
+      call BuildUnit(1, CASTLE, 65)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
 
+      call BuildUpgr(1, UPG_PRAYING, 58)
 
 
 
@@ -866,11 +845,9 @@ elseif tier == 2 then
 
 else
 
-	call BuildUnit(1, hero[1], 80)
-        call SetBuildReact(16, 4, FOOTMAN, 0, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-        call BuildUnit(1, KEEP, 50)
-      call BuildFront(1, ARCANE_TOWER, 50)
-
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
+      call BuildUnit(1, KEEP, 50)
 
 
 
@@ -942,13 +919,15 @@ endfunction
 function build_sequence_Rifle takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(19, RIFLEMAN, 40)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
+      call BuildUnit(18, RIFLEMAN, 40)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
       call BuildUnit(6, PRIEST, 66)
-      call BuildUnit(1, ARCANE_VAULT, 50)
+      call BuildUnit(5, KNIGHT, 68)
 
-
+      call BuildUpgr(1, UPG_BREEDING, 70)
+      call BuildUpgr(2, UPG_PRAYING, 58)
 
 
 
@@ -980,12 +959,14 @@ if tier == 3 then
 
 elseif tier == 2 then
       call BuildUnit(15, RIFLEMAN, 45)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
       call BuildUnit(3, PRIEST, 67)
+      call BuildUnit(4, FOOTMAN, 60)
       call BuildUnit(1, CASTLE,50)
-      call BuildUnit(1, ARCANE_VAULT, 60)
 
+      call BuildUpgr(1, UPG_GUN_RANGE, 58)
+      call BuildUpgr(1, UPG_PRAYING, 58)
 
 
 
@@ -1018,9 +999,8 @@ elseif tier == 2 then
 
 else
 
-      call BuildUnit(1, merc_rush, 60)
-      call SetBuildReact(12, 2, FOOTMAN, 4, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-      call BuildUnit(1, hero[1], 80)
+      call SetBuildReact(26, 2, FOOTMAN, 4, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
+      call BuildUnit(1, hero[1], 150)
       call BuildUnit(1, KEEP,50)
 
 
@@ -1060,7 +1040,6 @@ endfunction
 //============================================================================
 function init_strategy_Mortars takes nothing returns nothing
     call AddBlock(1, BLACKSMITH, false, 1, HOUSE, 60)
-    call AddBlock(1, BLACKSMITH, false, 9, PEASANT, 60)
     call AddBlock(1, BLACKSMITH, true, 0, ARCANE_VAULT, 60)
 
 
@@ -1097,14 +1076,15 @@ endfunction
 function build_sequence_Mortars takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(10, MORTAR, 48)
-      call BuildUnit(14, RIFLEMAN, 40)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, ARCANE_VAULT, 50)
-      call BuildUnit(1, ZEPPELIN, 50)
+      call BuildUnit(10, MORTAR, 55)
+      call BuildUnit(12, RIFLEMAN, 45)
+      call BuildUnit(4, KNIGHT, 55)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
 
-
+      call BuildUpgr(1, UPG_FRAGS, 58)
+      call BuildUpgr(1, UPG_BREEDING, 70)
 
 
 
@@ -1137,12 +1117,11 @@ if tier == 3 then
 elseif tier == 2 then
       call BuildUnit(6, MORTAR, 62)
       call BuildUnit(12, RIFLEMAN, 50)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
       call BuildUnit(1, CASTLE,50)
-      call BuildUnit(1, ARCANE_VAULT, 60)
-      call BuildUnit(1, ZEPPELIN, 50)
 
+      call BuildUpgr(1, UPG_GUN_RANGE, 58)
 
 
 
@@ -1175,9 +1154,8 @@ elseif tier == 2 then
 
 else
 
-      call BuildUnit(1, merc_rush, 60)
-      call SetBuildReact(12, 2, FOOTMAN, 4, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-      call BuildUnit(1, hero[1], 80)
+      call SetBuildReact(26, 3, FOOTMAN, 4, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
+      call BuildUnit(1, hero[1], 150)
       call BuildUnit(1, KEEP,50)
 
 
@@ -1249,15 +1227,20 @@ endfunction
 function build_sequence_Copters takes nothing returns nothing
 if tier == 3 then
 
-      call BuildUnit(50, COPTER, 15)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, ARCANE_VAULT, 50)
+      call BuildUnit(50, COPTER, 45)
+      if GetUpgradeLevel(UPG_TANK) > 0 then
+        call BuildUnit(8, ROCKET_TANK, 65)
+      else
+        call BuildUnit(8, TANK, 65)
+      endif
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+
 
       call BuildUpgr(1, UPG_FLAK, 115)
       call BuildUpgr(1, UPG_BOMBS, 115)
-
+      call BuildUpgr(1, UPG_TANK, 115)
 
 
 
@@ -1283,11 +1266,12 @@ if tier == 3 then
 
 
 elseif tier == 2 then
-      call BuildUnit(30, COPTER, 15)
-      call BuildUnit(1, hero[1], 20)
-      call BuildUnit(1, hero[2], 10)
+      call BuildUnit(15, COPTER, 45)
+      call BuildUnit(4, FOOTMAN, 55)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
       call BuildUnit(1, CASTLE,50)
-      call BuildUnit(1, ARCANE_VAULT, 60)
+
 
       call BuildUpgr(1, UPG_FLAK, 75)
       call BuildUpgr(1, UPG_BOMBS, 75)
@@ -1318,9 +1302,9 @@ elseif tier == 2 then
 
 else
 
-	call BuildUnit(1, hero[1], 80)
-        call SetBuildReact(16, 4, FOOTMAN, 0, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-        call BuildUnit(1, KEEP, 50)
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
+      call BuildUnit(1, KEEP, 50)
 
 
 
@@ -1397,14 +1381,15 @@ function build_sequence_MassSB takes nothing returns nothing
 if tier == 3 then
 
       call BuildUnit(30, SPELL_BREAKER, 40)
-      call BuildUnit(5, PRIEST, 90)
-      call BuildUnit(1, hero[1], 100)
-      call BuildUnit(1, hero[2], 100)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, ARCANE_VAULT, 50)
+      call BuildUnit(6, PRIEST, 90)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
+
       call BuildUnit(3, ARCANE_TOWER, 55)
 
-      call BuildUpgr(1, UPG_CONT_MAGIC, 100)
+      call BuildUpgr(1, UPG_CONT_MAGIC, 90)
+      call BuildUpgr(2, UPG_PRAYING, 90)
 
 
 
@@ -1443,12 +1428,13 @@ elseif tier == 2 then
 
       call BuildUnit(20, SPELL_BREAKER, 35)
       call BuildUnit(5, PRIEST, 65)
-      call BuildUnit(1, CASTLE, 30)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 70)
-      call BuildUnit(1, ARCANE_VAULT, 60)
-      call BuildUnit(2, ARCANE_TOWER, 55)
+      call BuildUnit(1, CASTLE, 55)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
 
+      call BuildUnit(2, ARCANE_TOWER, 55)
+      call BuildUpgr(1, UPG_CONT_MAGIC, 60)
+      call BuildUpgr(1, UPG_PRAYING, 90)
 
 
 
@@ -1486,10 +1472,9 @@ elseif tier == 2 then
 
 else
 
-      call BuildUnit(1, hero[1], 80)
-      call SetBuildReact(16, 4, FOOTMAN, 0, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
       call BuildUnit(1, KEEP, 50)
-      call BuildFront(1, ARCANE_TOWER, 50)
 
 
 
@@ -1562,16 +1547,15 @@ function init_strategy_Dragonhawk takes nothing returns nothing
 endfunction
 function build_sequence_Dragonhawk takes nothing returns nothing
 if tier == 3 then
-      call SetBuildReact(20, 0, GRYPHON, 30, HUMAN_DRAGON_HAWK, enemy_air, 8, 16, 40)
-      call BuildUpgr(1, UPG_CLOUD, 115)
-      call BuildUnit(1, CASTLE, 10)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, hero[3], 40)
-      call BuildUnit(1, ARCANE_VAULT, 50)
-      call BuildUnit(1, ZEPPELIN, 50)
+      call SetBuildReact(20, 0, GRYPHON, 15, HUMAN_DRAGON_HAWK, enemy_air, 8, 16, 70)
+      call BuildUpgr(1, UPG_CLOUD, 100)
+      call BuildUnit(6, KNIGHT, 100)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
 
-
+      call BuildUpgr(1, UPG_BREEDING, 105)
+      call BuildUpgr(1, UPG_HAMMERS, 105)
 
 
 
@@ -1604,10 +1588,11 @@ if tier == 3 then
 elseif tier == 2 then
 
       call BuildUnit(15, HUMAN_DRAGON_HAWK, 45)
+      call BuildUnit(4, FOOTMAN, 60)
       call BuildUnit(1, CASTLE, 55)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, ARCANE_VAULT, 60)
+      call BuildUnit(1, hero[1], 130)
+      call BuildUnit(1, hero[2], 120)
+
 
 
 
@@ -1640,11 +1625,9 @@ elseif tier == 2 then
 
 
 else
-	call BuildUnit(1, hero[1], 80)
-        call SetBuildReact(16, 4, FOOTMAN, 0, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-        call BuildUnit(1, KEEP, 50)
-	call BuildFront(1, ARCANE_TOWER, 50)
-
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
+      call BuildUnit(1, KEEP, 50)
 
 
 
@@ -1679,7 +1662,6 @@ endfunction
 
 
 function init_strategy_BarrackMix takes nothing returns nothing
-    call AddHarass(2, 2, RIFLEMAN)
     call AddHarass(2, 4, FOOTMAN)
     set distraction_group = 2
 
@@ -1711,15 +1693,16 @@ endfunction
 function build_sequence_BarrackMix takes nothing returns nothing
 if tier == 3 then
 
-      call SetBuildReact(40, 2, KNIGHT, 6, RIFLEMAN, (enemy_unarmored + (enemy_air * 2) + enemy_magic - (enemy_normal * 2)), 4, 25, 60)
-      call SetBuildReact(10, 0, MORTAR, 0, COPTER, (enemy_unarmored + (enemy_air * 4) - (enemy_piercing * 4)), 4, 25, 55)
+      call SetBuildReact(36, 2, KNIGHT, 6, RIFLEMAN, (enemy_unarmored + (enemy_air * 2) + enemy_magic - (enemy_normal * 2)), 4, 25, 60)
+      call SetBuildReact(12, 0, MORTAR, 0, COPTER, (enemy_unarmored + (enemy_air * 4) - (enemy_piercing * 4)), 4, 25, 55)
       if GetUpgradeLevel(UPG_TANK) > 0 then
-        call SetBuildReact(20, 1, KNIGHT, 0, ROCKET_TANK, ((enemy_towers * 2) + enemy_air - (enemy_siege * 3) - enemy_normal), 4, 25, 50)
+        call SetBuildReact(22, 1, KNIGHT, 0, ROCKET_TANK, ((enemy_towers * 2) + enemy_air - (enemy_siege * 3) - enemy_normal), 4, 25, 50)
       else
-        call SetBuildReact(20, 1, KNIGHT, 0, TANK, ((enemy_towers * 2) + enemy_air - (enemy_siege * 3) - enemy_normal), 4, 25, 50)
+        call SetBuildReact(22, 1, KNIGHT, 0, TANK, ((enemy_towers * 2) + enemy_air - (enemy_siege * 3) - enemy_normal), 4, 25, 50)
       endif
-      call BuildUnit(1, hero[1], 90)
-      call BuildUnit(1, hero[2], 60)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
       call BuildUpgr(Min((((TownCountDone(FOOTMAN)) + TownCountDone(KNIGHT))/4),3), UPG_MELEE, 60)
       call BuildUpgr(Min((((TownCountDone(RIFLEMAN)) + TownCountDone(MORTAR) + TownCountDone(COPTER))/4),3), UPG_RANGED, 60)
       call BuildUpgr(Min((((TownCountDone(RIFLEMAN)) + TownCountDone(MORTAR))/4),3), UPG_LEATHER, 50)
@@ -1731,7 +1714,7 @@ if tier == 3 then
       call BuildUpgr(Min((TownCountDone(COPTER)/3),1), UPG_FLAK, 50)
       call BuildUpgr(Min((TownCountDone(TANK)/2),1), UPG_TANK, 50)
       call BuildUpgr(Min((TownCountDone(KNIGHT)/3),1), UPG_BREEDING, 60)
-      call BuildUnit(1, ARCANE_VAULT, 45)
+
 
 
 
@@ -1759,17 +1742,17 @@ if tier == 3 then
 elseif tier == 2 then
 
       call SetBuildReact(20, 3, FOOTMAN, 5, RIFLEMAN, (enemy_unarmored + (enemy_air * 2) + enemy_magic - (enemy_normal * 2)), 4, 25, 50)
-      call SetBuildReact(10, 0, MORTAR, 0, COPTER, (enemy_air * 3 - (enemy_piercing * 3)), 4, 25, 40)
-      call BuildUnit(1, CASTLE, 45)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 40)
+      call SetBuildReact(12, 0, MORTAR, 0, COPTER, (enemy_air * 3 - (enemy_piercing * 3)), 4, 25, 40)
+      call BuildUnit(1, CASTLE, 50)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
       call BuildUpgr(Min((TownCountDone(RIFLEMAN)/3),1), UPG_GUN_RANGE, 70)
-      call BuildUpgr(Min((TownCountDone(FOOTMAN)/5),1), UPG_DEFEND, 70)
-      call BuildUpgr(Min((((TownCountDone(FOOTMAN)) + TownCountDone(KNIGHT))/4),2), UPG_MELEE, 60)
-      call BuildUpgr(Min((((TownCountDone(RIFLEMAN)) + TownCountDone(MORTAR) + TownCountDone(COPTER))/4),2), UPG_RANGED, 60)
-      call BuildUpgr(Min((((TownCountDone(RIFLEMAN)) + TownCountDone(MORTAR))/4),2), UPG_LEATHER, 50)
-      call BuildUpgr(Min((((TownCountDone(FOOTMAN)) + TownCountDone(KNIGHT) + TownCountDone(COPTER))/4),2), UPG_ARMOR, 50)
-      call BuildUnit(1, ARCANE_VAULT, 55)
+      call BuildUpgr(Min((TownCountDone(FOOTMAN)/5),1), UPG_DEFEND, 40)
+      call BuildUpgr(Min((((TownCountDone(FOOTMAN)) + TownCountDone(KNIGHT))/4),2), UPG_MELEE, 45)
+      call BuildUpgr(Min((((TownCountDone(RIFLEMAN)) + TownCountDone(MORTAR) + TownCountDone(COPTER))/4),2), UPG_RANGED, 45)
+      call BuildUpgr(Min((((TownCountDone(RIFLEMAN)) + TownCountDone(MORTAR))/4),2), UPG_LEATHER, 35)
+      call BuildUpgr(Min((((TownCountDone(FOOTMAN)) + TownCountDone(KNIGHT) + TownCountDone(COPTER))/4),2), UPG_ARMOR, 35)
+
 
 
 
@@ -1796,11 +1779,10 @@ elseif tier == 2 then
 
 else
 
-      call SetBuildReact(18, 2, FOOTMAN, 4, RIFLEMAN, (enemy_unarmored + (enemy_air * 2) + enemy_magic - (enemy_normal * 2)), 4, 25, 50)
+      call SetBuildReact(26, 3, FOOTMAN, 4, RIFLEMAN, (enemy_unarmored + (enemy_air * 2) + enemy_magic - (enemy_normal * 2)), 4, 25, 50)
       call BuildUpgr(Min((TownCountDone(FOOTMAN)/5),1), UPG_DEFEND, 45)
-      call BuildUnit(1, KEEP, 45)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, ARCANE_VAULT, 15)
+      call BuildUnit(1, KEEP, 50)
+      call BuildUnit(1, hero[1], 150)
 
 
 
@@ -1829,7 +1811,6 @@ endif
 endfunction
 
 function init_strategy_SanctumMix takes nothing returns nothing
-    call AddHarass(2, 2, RIFLEMAN)
     call AddHarass(2, 4, FOOTMAN)
     set distraction_group = 2
 
@@ -1868,11 +1849,12 @@ endfunction
 function build_sequence_SanctumMix takes nothing returns nothing
 if tier == 3 then
 
-      call SetBuildReact(40, 3, GRYPHON, 4, HUMAN_DRAGON_HAWK, ((enemy_air * 2) - enemy_piercing), 4, 25, 45)
-      call SetBuildReact(30, 3, SPELL_BREAKER, 3, SORCERESS, ((enemy_normal * 2) - enemy_magic - enemy_siege - enemy_piercing), 4, 25, 45)
+      call SetBuildReact(32, 3, GRYPHON, 4, HUMAN_DRAGON_HAWK, ((enemy_air * 2) - enemy_piercing), 4, 25, 45)
+      call SetBuildReact(32, 3, SPELL_BREAKER, 3, SORCERESS, ((enemy_normal * 2) - enemy_magic - enemy_siege - enemy_piercing), 4, 25, 45)
       call BuildUnit(10, PRIEST, 60)
-      call BuildUnit(1, hero[1], 90)
-      call BuildUnit(1, hero[2], 70)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
       call BuildUpgr(Min(((TownCountDone(SPELL_BREAKER) + TownCountDone(HUMAN_DRAGON_HAWK) + TownCountDone(GRYPHON))/4),3), UPG_MELEE, 50)
       call BuildUpgr(Min(((TownCountDone(GRYPHON) + TownCountDone(HUMAN_DRAGON_HAWK))/3),3), UPG_LEATHER, 50)
       call BuildUpgr(Min((TownCountDone(SPELL_BREAKER)/2),3), UPG_ARMOR, 50)
@@ -1882,7 +1864,7 @@ if tier == 3 then
       call BuildUpgr(Min((TownCountDone(SORCERESS)/2),2), UPG_SORCERY, 70)
       call BuildUpgr(Min((TownCountDone(GRYPHON)/3),1), UPG_HAMMERS, 60)
       call BuildUpgr(Min((TownCountDone(GRYPHON)/4),1), UPG_BREEDING, 60)
-      call BuildUnit(1, ARCANE_VAULT, 45)
+
 
 
 
@@ -1916,18 +1898,20 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-      call SetBuildReact(20, 3, SPELL_BREAKER, 0, SORCERESS, ((enemy_normal * 2) - enemy_magic - enemy_siege - enemy_piercing), 4, 25, 45)
+      call SetBuildReact(24, 3, SPELL_BREAKER, 0, SORCERESS, ((enemy_normal * 2) - enemy_magic - enemy_siege - enemy_piercing), 4, 25, 45)
       call BuildUnit(7, PRIEST, 55)
       call BuildUnit(4, HUMAN_DRAGON_HAWK, 30)
-      call BuildUnit(1, CASTLE, 42)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUpgr(Min(((TownCountDone(SPELL_BREAKER) + TownCountDone(HUMAN_DRAGON_HAWK) + TownCountDone(GRYPHON))/4),2), UPG_MELEE, 40)
-      call BuildUpgr(Min(((TownCountDone(GRYPHON) + TownCountDone(HUMAN_DRAGON_HAWK))/2),2), UPG_LEATHER, 50)
+      call BuildUnit(3, FOOTMAN, 60)
+      call BuildUnit(1, CASTLE, 50)
+      call BuildUnit(1, hero[1], 130)
+      call BuildUnit(1, hero[2], 120)
+      call BuildUpgr(Min(((TownCountDone(SPELL_BREAKER) + TownCountDone(HUMAN_DRAGON_HAWK) + TownCountDone(GRYPHON))/4),2), UPG_MELEE, 35)
+      call BuildUpgr(Min(((TownCountDone(GRYPHON) + TownCountDone(HUMAN_DRAGON_HAWK))/2),2), UPG_LEATHER, 35)
       call BuildUpgr(Min((TownCountDone(SPELL_BREAKER)/2),2), UPG_ARMOR, 30)
       call BuildUpgr(Min((TownCountDone(PRIEST)/2),1), UPG_PRAYING, 40)
       call BuildUpgr(Min((TownCountDone(SORCERESS)/2),1), UPG_SORCERY, 40)
-      call BuildUnit(1, ARCANE_VAULT, 55)
+      call BuildUpgr(Min((TownCountDone(SPELL_BREAKER)/3),1), UPG_CONT_MAGIC, 30)
+
 
 
 
@@ -1961,11 +1945,9 @@ elseif tier == 2 then
 
 else
 
-      call BuildFront(1, ARCANE_TOWER, 75)
-      call BuildUnit(1, hero[1], 80)
-        call SetBuildReact(16, 4, FOOTMAN, 0, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-        call BuildUnit(1, KEEP, 50)
-
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
+      call BuildUnit(1, KEEP, 50)
 
 
 
@@ -2063,11 +2045,13 @@ if tier == 3 then
       endif
       call BuildUnit(8, MORTAR, 60)
       call BuildUnit(8, KNIGHT, 55)
-      call BuildUnit(1, hero[1], 90)
-      call BuildUnit(1, hero[2], 60)
-      call BuildUnit(1, ARCANE_VAULT, 45)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+      call BuildUnit(1, hero[3], 120)
 
-
+      call BuildUpgr(1, UPG_BREEDING, 70)
+      call BuildUpgr(1, UPG_TANK, 115)
+      call BuildUpgr(1, UPG_FRAGS, 100)
 
 
 
@@ -2110,9 +2094,10 @@ elseif tier == 2 then
 
       call BuildUnit(10, MORTAR, 60)
       call BuildUnit(14, FOOTMAN, 60)
-      call BuildUnit(1, CASTLE, 45)
-      call BuildUnit(1, hero[1], 80)
-      call BuildUnit(1, hero[2], 40)
+      call BuildUnit(1, CASTLE, 55)
+      call BuildUnit(1, hero[1], 140)
+      call BuildUnit(1, hero[2], 130)
+
 
 
 
@@ -2155,9 +2140,9 @@ elseif tier == 2 then
 
 else
 
-	call BuildUnit(1, hero[1], 80)
-        call SetBuildReact(16, 4, FOOTMAN, 0, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-        call BuildUnit(1, KEEP, 50)
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
+      call BuildUnit(1, KEEP, 50)
 
 
 
@@ -2231,14 +2216,16 @@ endfunction
 function build_sequence_VersusOrc takes nothing returns nothing
 if tier == 3 then
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(1, hero[2], 70)
-	call BuildUnit(1, hero[3], 60)
-	call BuildUnit(35, SORCERESS, 50)
-	call BuildUnit(10, PRIEST, 100)
-	call BuildUpgr(2, UPG_PRAYING, 120)
-	call BuildUpgr(2, UPG_SORCERY, 120)
-
+    call BuildUnit(1, hero[1], 140)
+    call BuildUnit(1, hero[2], 130)
+    call BuildUnit(1, hero[3], 120)
+    call BuildUnit(35, SORCERESS, 50)
+    call BuildUnit(12, PRIEST, 100)
+    call BuildUnit(8, SPELL_BREAKER, 100)
+    call BuildUnit(4, KNIGHT, 110)
+    call BuildUpgr(2, UPG_PRAYING, 115)
+    call BuildUpgr(2, UPG_SORCERY, 115)
+    call BuildUpgr(1, UPG_CONT_MAGIC, 115)
 
 
 
@@ -2263,13 +2250,14 @@ if tier == 3 then
 
 elseif tier == 2 then
 
-	call BuildUnit(1, hero[1], 80)
-	call BuildUnit(1, hero[2], 60)
-	call BuildUnit(15, SORCERESS, 60)
-	call BuildUnit(5, PRIEST, 80)
-	call BuildUnit(1, CASTLE, 60)
-	call BuildUpgr(1, UPG_PRAYING, 90)
-	call BuildUpgr(1, UPG_SORCERY, 90)
+    call BuildUnit(1, hero[1], 140)
+    call BuildUnit(1, hero[2], 130)
+    call BuildUnit(15, SORCERESS, 60)
+    call BuildUnit(5, PRIEST, 80)
+    call BuildUnit(5, SPELL_BREAKER, 75)
+    call BuildUnit(1, CASTLE, 65)
+    call BuildUpgr(1, UPG_PRAYING, 70)
+    call BuildUpgr(1, UPG_SORCERY, 70)
 
 
 
@@ -2294,9 +2282,9 @@ elseif tier == 2 then
 
 else
 
-	call BuildUnit(1, hero[1], 80)
-        call SetBuildReact(16, 4, FOOTMAN, 0, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 38) 
-        call BuildUnit(1, KEEP, 50)
+      call BuildUnit(1, hero[1], 150)
+      call SetBuildReact(26, 4, FOOTMAN, 2, RIFLEMAN, (enemy_unarmored + (enemy_lightarmor * 2) + enemy_air + enemy_magic - (enemy_normal * 2)), 4, 25, 44) 
+      call BuildUnit(1, KEEP, 50)
 
 
 
@@ -2322,4 +2310,7 @@ else
 
 endif
 endfunction
+
+
+
 
