@@ -1163,7 +1163,7 @@ endfunction
 
 //============================================================================
 function c2s takes playercolor c returns string
-  return cs2s(ai_name, c) + ": "
+  return cs2s(ai_name + ":", c) + " "
 endfunction
 
 //===========================================================================
@@ -3111,9 +3111,9 @@ function AddAMAIName takes integer data returns nothing
     endif
 
     if chat_short_name then
-      set message_add = cs2s(ai_name, GetPlayerColor(ai_player)) + ": "
+      set message_add = cs2s(ai_name + ":", GetPlayerColor(ai_player)) + " "
     else
-      set message_add = cs2s(ai_tname, GetPlayerColor(ai_player)) + ": "
+      set message_add = cs2s(ai_tname + ":", GetPlayerColor(ai_player)) + " "
     endif
   else
     set ai_name = "Player " + Int2Str(data)
