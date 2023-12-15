@@ -3101,7 +3101,7 @@ function AddAMAIName takes integer data returns nothing
     else
       set ai_name = profilename[profile]
       set ai_tname = ai_name
-      if add_tag == true
+      if add_tag == true then
         if add_skill == true then
           set ai_tname = GetAMAITag(difficulty)+ai_tname
         else
