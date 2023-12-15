@@ -1,11 +1,11 @@
 {Name=Hunter}Vou te caçar até o ano novo!
 {Name=Crazy_Rusher} Vou te rushar muito mais em 2006.
-{Name=Crusher}Você vai ser esmagado duas vezes mais do que foi em 2005!!
+{Name=Crusher}Você vai ser esmagado duas vezes mais do que foi em 2024!!
 {Name=Zmasher}Feliz Ano Novo! Que seja.
 {Name=Aggressario}AARGH! Vou te derrotar várias vezes em 2006.
 {Name=chick3n}Será que ouso jogar com alguém mais, oops, já é 2006?
 {Name=CPU}Calculando 2006 para ser meu ano mais lucrativo.
-{Name=ErRoR}Erro Erro!!, Deu pau por causa do but 2 Milênios +5!
+{Name=ErRoR}Erro Erro!!, Deu pau por causa do but 2 Milênios +24!
 {Name=RomuLus}AAAH! Um feliz ano novo para você, meu inimigo!
 {Name=ReMus}Não tem nada melhor que o ano novo, exceto te destruir, seu pato.
 {Name=Xerox}Vou ter outra chance de te bater ou você inventou uma estratégia nova?
