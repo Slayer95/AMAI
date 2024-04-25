@@ -7365,7 +7365,7 @@ endfunction
 
 //============================================================================
 function TQInitJobs takes nothing returns nothing
-  call TQAddJob(GetRandomReal(5, 30), TIMED_CHAT, C_NewYear)
+  call TQAddJob(GetRandomReal(5, 30), TIMED_CHAT, C_Greet)
   call TQAddJob(GetRandomReal(5, 10), TIMED_CHAT, C_STRATEGY)
 #INCLUDETABLE <Jobs.txt> #EFR #COND '%4' eq 'true'
   call TQAddJob(GetRandomReal(%5, %6), %1, 0)
