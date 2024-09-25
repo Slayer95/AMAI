@@ -8651,6 +8651,10 @@ function cmd_misc takes integer cmd, integer data returns nothing
   if cmd == 88 then // Triggering rename
     call AddAMAIName(data)
 
+  elseif cmd == 89 then
+    set nearest_neutral[NEUTRAL_TAVERN] = null
+    set recalculate_heros = true
+
   elseif cmd == 50 then // Triggering chat
     set chatting = not chatting
 
