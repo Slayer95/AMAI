@@ -72,7 +72,7 @@ function GroupOrderFocusWindInstant_d takes group g, unit target returns nothing
   loop
     set u = FirstOfGroup(ug)
     exitwhen u == null
-    if (GetUnitAbilityLevel(u, 'AOwk') > 0 or GetUnitAbilityLevel(u, 'ANwk') > 0) then
+    if (GetUnitAbilityLevel(u, 'AOwk') > 0 or GetUnitAbilityLevel(u, 'ANwk') > 0 or GetUnitAbilityLevel(u, 'A00N') > 0) then
       if not IsUnitInGroup(u, windwalk_group) then
         call GroupAddUnit(windwalk_group, u)
         call GroupRemoveUnit(g, u) // Removed from other focus fire groups
@@ -136,7 +136,7 @@ function SelectByWindwalk takes group rg returns group
   loop
     set u = FirstOfGroup(g)
     exitwhen u == null
-    if GetUnitAbilityLevel(u, 'AOwk') > 0 or GetUnitAbilityLevel(u, 'ANwk') > 0 then
+    if (GetUnitAbilityLevel(u, 'AOwk') > 0 or GetUnitAbilityLevel(u, 'ANwk') > 0 or GetUnitAbilityLevel(u, 'A00N') > 0) then
       call GroupAddUnit(rg, u )
     endif
     call GroupRemoveUnit(g, u )

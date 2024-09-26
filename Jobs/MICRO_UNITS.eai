@@ -81,7 +81,7 @@ function SaveUnit takes unit u , integer id returns nothing
     return
   endif
   call RemoveGuardPosition(u)  //no Remove 'hphx' phoenix or militia
-  if GetUnitAbilityLevel(u, 'AOwk') > 0 or GetUnitAbilityLevel(u, 'ANwk') > 0 then
+  if (GetUnitAbilityLevel(u, 'AOwk') > 0 or GetUnitAbilityLevel(u, 'ANwk') > 0 or GetUnitAbilityLevel(u, 'A00N') > 0) then
     if not IsUnitInvisibleAM(u, Player(PLAYER_NEUTRAL_AGGRESSIVE)) then
       call IssueImmediateOrder(u, "windwalk")
     endif

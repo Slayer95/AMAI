@@ -192,7 +192,7 @@ function ExecuteSaveHero takes integer hn, integer a, unit healer returns nothin
 
   if a != ACTION_DO_NOTHING and a != ACTION_TP then
     call RemoveGuardPosition(u)
-    if GetUnitAbilityLevel(u, 'AOwk') > 0 or GetUnitAbilityLevel(u, 'ANwk') > 0 then
+    if (GetUnitAbilityLevel(u, 'AOwk') > 0 or GetUnitAbilityLevel(u, 'ANwk') > 0 or GetUnitAbilityLevel(u, 'A00N') > 0) then
       if not IsUnitInvisible(u, Player(PLAYER_NEUTRAL_AGGRESSIVE)) then
         call IssueImmediateOrder(u, "windwalk")
       endif
