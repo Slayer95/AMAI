@@ -11814,24 +11814,51 @@ endfunction
 
 //============================================================================
 function BuildFarms takes integer qty returns nothing
-  if TownCount(racial_farm) < race_farms_at_mine then
-    call BuildAtMine(Min(TownCountDone(racial_farm) + qty, max_farms), racial_farm, farm_prio)
-  elseif race_build_farms_front and front_locs_computed and TownCountDone(racial_farm) <= race_farms_front_limit + 1 and TownCountDone(racial_farm) >= 1 then
-    call BuildFront(Min(TownCountDone(racial_farm) + qty, max_farms), racial_farm, farm_prio)
-  else
-    call BuildUnit(Min(TownCountDone(racial_farm) + qty, max_farms), racial_farm, farm_prio)
-  endif
+  local integer farms_count = TownCount(racial_farm)
+  local integer farms_count_done = TownCountDone(racial_farm)
+  local integer issue_front = 0
+  local integer issue_mine = 0
+  local integer issue_other = 0
+
+  loop
+    exitwhen qty <= 0 or max_farms <= farms_count
+    if race_build_farms_front and front_locs_computed and farms_count_done + issue_front + 1 <= race_farms_front_limit then
+      set issue_front = issue_front + 1
+      call BuildFront(Min(farms_count_done + issue_front + issue_mine + issue_other, max_farms), racial_farm, farm_prio)
+      set farms_count = farms_count + 1
+      set qty = qty - 1
+    elseif farms_count < race_farms_at_mine then
+      set issue_mine = issue_mine + 1
+      call BuildAtMine(Min(farms_count_done + issue_front + issue_mine + issue_other, max_farms), racial_farm, farm_prio)
+      set farms_count = farms_count + 1
+      set qty = qty - 1
+    else
+      set issue_other = issue_other + 1
+      call BuildUnit(Min(farms_count_done + issue_front + issue_mine + issue_other, max_farms), racial_farm, farm_prio)
+      set farms_count = farms_count + 1
+      set qty = qty - 1
+    endif
+  endloop
 endfunction
 
 //============================================================================
 function FarmBuilder takes nothing returns nothing
-  if FoodCap() >= ver_food_limit then
+  local integer extra_farms = 0
+  local integer food_cap = FoodCap()
+  local integer food_space = FoodSpace()
+  if food_cap >= ver_food_limit then
     return
   endif
-  if FoodSpace() <= farm_food2 then
-    call BuildFarms(2)
-  elseif FoodSpace() <= farm_food then
-    call BuildFarms(1)
+  if town_threatened then
+    set extra_farms = extra_farms + 1
+  endif
+  if food_space <= farm_food2 then
+    call BuildFarms(2 + extra_farms)
+  elseif food_space <= farm_food then
+    if (11 < food_cap and food_cap <= 21) then
+      set extra_farms = extra_farms + 1
+    endif
+    call BuildFarms(1 + extra_farms)
   endif
 endfunction
 
