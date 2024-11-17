@@ -144,6 +144,7 @@ jassparser %VER%\common.j Scripts\OPT%VER%\Blizzard.j
 if "%errorlevel%"=="1" SET RESULTOPTVER=1
 if "%RESULTOPTVER%"=="1" (
   ECHO Optimization %VER% error
+  del checksum.txt
   if "%SILENT%" neq "1" (
     pause
     ECHO Exiting

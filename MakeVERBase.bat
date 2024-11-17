@@ -83,4 +83,9 @@ if "%RESULTMAKEVER%"=="1" (
   )
 ) else (
   ECHO Making AMAI %VER% finish
+  ECHO _____________________________
+  ECHO saving \checksum.txt
+  (git rev-parse head) > checksum.txt 2>&1
+  ECHO _____________________________
 )
+ECHO _____________________________
